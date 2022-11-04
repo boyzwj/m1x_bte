@@ -2,7 +2,7 @@ from uic.ui_main_window import Ui_MainWindow
 from PySide6.QtWidgets import *
 from PySide6 import QtCore, QtGui
 from PySide6.QtGui import *
-from view.element.item import *
+from view.element.node import *
 from view.element.graphic_view import *
 
 
@@ -17,11 +17,13 @@ class MainWindow(QMainWindow):
 
         self.graphicsView = GraphicView(self.ui.centralwidget)
         self.graphicsView.setObjectName(u"graphicsView")
-
         self.ui.horizontalLayout.addWidget(self.graphicsView)
-
-        item = Item()
         self.scene = QGraphicsScene()
         self.graphicsView.setScene(self.scene)
-        self.scene.addItem(item)
-        item.setPos(100, 100)
+        node1 = Node()
+        self.scene.addItem(node1)
+        node1.setPos(100, 100)
+
+        node2 = Node()
+        self.scene.addItem(node2)
+        node2.setPos(300, 100)

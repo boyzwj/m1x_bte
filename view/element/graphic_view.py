@@ -34,7 +34,7 @@ class GraphicView(QGraphicsView):
         self.translate(delta.x(), delta.y())
 
     def mousePressEvent(self, event):
-        if event.button() == Qt.MouseButton.RightButton:
+        if event.button() == Qt.MouseButton.MiddleButton:
             # store the origin point
             self.startPos = event.pos()
         else:
@@ -58,6 +58,18 @@ class GraphicView(QGraphicsView):
             self.startPos = event.pos()
         else:
             super(GraphicView, self).mouseMoveEvent(event)
+
+    def keyPressEvent(self, event: QKeyEvent) -> None:
+        if event.key() == Qt.Key.Key_W:
+            print("w")
+        elif event.key() == Qt.Key.Key_S:
+            print("S")
+        elif event.key() == Qt.Key.Key_A:
+            print("A")
+        elif event.key() == Qt.Key.Key_D:
+            print("D")
+
+        return super().keyPressEvent(event)
 
     def mouseReleaseEvent(self, event):
         self.startPos = None
