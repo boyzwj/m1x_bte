@@ -1,50 +1,18 @@
 import yaml
 import os
 
-template = {
-    "last_project": "",
-    "node_type": {
-        "Root": {
-            "style": "background:#AABBCC;"
-        },
-        "Composite": {
-            "style": "background:#FFFFFF;"
-        },
-        "Decorator": {
-            "style": "background:#EEC211;"
-        },
-        "Condition": {
-            "style": "background:#A25EA2;"
-        },
-        "Action": {
-            "style": "background:#33CC8F;"
-        }
-    }
-}
-
-
-
 class Config():
-    last_project: str = ""
-    node_type = {
-        "Root": {
-            "style": "background:#AABBCC;"
+    data = {
+        "last_project": "",
+        "node_type": {
+            "Root": {"style": "background:#AABBCC;"},
+            "Composite": {"style": "background:#FFFFFF;"},
+            "Decorator": {"style": "background:#EEC211;"},
+            "Condition": {"style": "background:#A25EA2;"},
+            "Action": {"style": "background:#33CC8F;"}
         },
-        "Composite": {
-            "style": "background:#FFFFFF;"
-        },
-        "Decorator": {
-            "style": "background:#EEC211;"
-        },
-        "Condition": {
-            "style": "background:#A25EA2;"
-        },
-        "Action": {
-            "style": "background:#33CC8F;"
+        "nodes": []
         }
-    }
-    
-    
     def __init__(self):
         pass
     
@@ -55,11 +23,12 @@ class Config():
         data = yaml.load(file_data)
         return data 
     
-    def load(self,path: str):
+    def load(self, path: str):
         if os.path.isfile(path):
-            data = self.get_yaml_data(path)
-            self.last_project = data["last_project"]
-            self.node_type = data["node_type"]
+            self.data = self.get_yaml_data(path)
+        self.last_project = self.data["last_project"]
+        self.node_type = self.data["node_type"]
+        self.nodes = self.data["nodes"]
             
         
         
