@@ -9,28 +9,26 @@ class GraphicView(QGraphicsView):
         self.startPos = None
 
     def wheelEvent(self, event: QWheelEvent) -> None:
-        zoomInFactor = 1.1
-        zoomOutFactor = 1 / zoomInFactor
+        zoom_in_factor = 1.1
+        zoom_out_factor = 1 / zoom_in_factor
 
         # Set Anchors
-        self.setTransformationAnchor(QGraphicsView.NoAnchor)
-        self.setResizeAnchor(QGraphicsView.NoAnchor)
 
         # Save the scene pos
-        oldPos = self.mapToScene(event.position().toPoint())
-        self.centerOn(oldPos)
+        old_pos = self.mapToScene(event.position().toPoint())
+        self.centerOn(old_pos)
         # Zoom
         if event.angleDelta().y() > 0:
-            zoomFactor = zoomInFactor
+            zoom_factor = zoom_in_factor
         else:
-            zoomFactor = zoomOutFactor
-        self.scale(zoomFactor, zoomFactor)
+            zoom_factor = zoom_out_factor
+        self.scale(zoom_factor, zoom_factor)
 
         # Get the new position
-        newPos = self.mapToScene(event.position().toPoint())
+        new_pos = self.mapToScene(event.position().toPoint())
 
         # Move scene to old position
-        delta = newPos - oldPos
+        delta = new_pos - old_pos
         self.translate(delta.x(), delta.y())
 
     def mousePressEvent(self, event):
@@ -50,10 +48,10 @@ class GraphicView(QGraphicsView):
             transform = self.transform()
             # m11 refers to the horizontal scale, m22 to the vertical scale;
             # divide the delta by their corresponding ratio
-            deltaX = delta.x() / transform.m11()
-            deltaY = delta.y() / transform.m22()
+            delta_x = delta.x() / transform.m11()
+            delta_y = delta.y() / transform.m22()
             # translate the current sceneRect by the delta
-            self.setSceneRect(self.sceneRect().translated(deltaX, deltaY))
+            self.setSceneRect(self.sceneRect().translated(delta_x, delta_y))
             # update the new origin point to the current position
             self.startPos = event.pos()
         else:
