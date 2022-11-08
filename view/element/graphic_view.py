@@ -1,12 +1,23 @@
 from PySide6.QtWidgets import *
 from PySide6.QtGui import *
 from PySide6.QtCore import *
+from view.element.node import *
+from view.element.link import *
 
 
 class GraphicView(QGraphicsView):
     def __init__(self, parent: QWidget):
         super(GraphicView, self).__init__(parent)
         self.startPos = None
+        self.start_link = None
+        self.tmp_link = None
+        self.setupUi()
+    def setupUi(self):
+        self.setScene(QGraphicsScene())
+        self.tmp_link = QLink()
+        self.scene().addItem(self.tmp_link)
+    def add_node(self, node: QNode):
+        self.scene().addItem(node)
 
     def wheelEvent(self, event: QWheelEvent) -> None:
         zoom_in_factor = 1.1
@@ -35,6 +46,16 @@ class GraphicView(QGraphicsView):
         if event.button() == Qt.MouseButton.MiddleButton:
             # store the origin point
             self.startPos = event.pos()
+        if event.button() == Qt.MouseButton.LeftButton:
+            if QApplication.keyboardModifiers() & Qt.KeyboardModifier.ControlModifier:
+                super(GraphicView, self).mousePressEvent(event)
+                nodes = self.scene().selectedItems()
+                if len(nodes) > 0:
+                    self.start_link = nodes[0]
+                else:
+                    self.start_link = None
+            else:
+                super(GraphicView, self).mousePressEvent(event)
         else:
             super(GraphicView, self).mousePressEvent(event)
 
@@ -54,8 +75,14 @@ class GraphicView(QGraphicsView):
             self.setSceneRect(self.sceneRect().translated(delta_x, delta_y))
             # update the new origin point to the current position
             self.startPos = event.pos()
+        elif self.start_link is not None and QApplication.keyboardModifiers() & Qt.KeyboardModifier.ControlModifier:
+            print("fuck")
         else:
             super(GraphicView, self).mouseMoveEvent(event)
+
+    def mouseDoubleClickEvent(self, event: QMouseEvent):
+        if len(self.scene().selectedItems()) == 1:
+            print("begion link")
 
     def keyPressEvent(self, event: QKeyEvent) -> None:
         if event.key() == Qt.Key.Key_W:
@@ -66,7 +93,6 @@ class GraphicView(QGraphicsView):
             print("A")
         elif event.key() == Qt.Key.Key_D:
             print("D")
-
         return super().keyPressEvent(event)
 
     def mouseReleaseEvent(self, event):

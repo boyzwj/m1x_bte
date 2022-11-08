@@ -3,6 +3,8 @@ from PySide6.QtWidgets import *
 from PySide6 import QtCore, QtGui
 from PySide6.QtGui import *
 from view.element.node import *
+from view.element.link import *
+
 from view.element.graphic_view import *
 
 
@@ -16,16 +18,14 @@ class MainWindow(QMainWindow):
         self.init_ui()
 
     def init_ui(self):
-
         self.graphicsView = GraphicView(self.ui.centralwidget)
         self.graphicsView.setObjectName(u"graphicsView")
         self.ui.horizontalLayout.addWidget(self.graphicsView)
-        self.scene = QGraphicsScene()
-        self.graphicsView.setScene(self.scene)
-        node1 = Node()
-        self.scene.addItem(node1)
+
+        node1 = QNode(node_name="Root")
+        self.graphicsView.add_node(node1)
         node1.setPos(100, 100)
 
-        node2 = Node()
-        self.scene.addItem(node2)
-        node2.setPos(300, 100)
+        node2 = QNode(node_name="Action")
+        self.graphicsView.add_node(node2)
+        node2.setPos(300, 300)
