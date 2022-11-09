@@ -9,13 +9,14 @@ class GraphicView(QGraphicsView):
     def __init__(self, parent: QWidget):
         super(GraphicView, self).__init__(parent)
         self.startPos = None
-        self.start_link = None
-        self.tmp_link = None
+        self.start_link: QNode = None
+        self.tmp_link: QGraphicsLineItem = None
         self.setupUi()
     def setupUi(self):
+        self.setMouseTracking(True)
         self.setScene(QGraphicsScene())
-        self.tmp_link = QLink()
-        self.scene().addItem(self.tmp_link)
+        # self.tmp_link = QLink()
+        # self.scene().addItem(self.tmp_link)
     def add_node(self, node: QNode):
         self.scene().addItem(node)
 
@@ -76,13 +77,19 @@ class GraphicView(QGraphicsView):
             # update the new origin point to the current position
             self.startPos = event.pos()
         elif self.start_link is not None and QApplication.keyboardModifiers() & Qt.KeyboardModifier.ControlModifier:
-            print("fuck")
+            line = QLineF(self.start_link.scenePos(),event.scenePosition())
+            if self.tmp_link is None:
+                self.tmp_link = QGraphicsLineItem(line)
+                print("add tmp link to graphics")
+                self.scene().addItem(self.tmp_link)
+            else:
+                self.tmp_link.setLine(line)
         else:
             super(GraphicView, self).mouseMoveEvent(event)
 
     def mouseDoubleClickEvent(self, event: QMouseEvent):
         if len(self.scene().selectedItems()) == 1:
-            print("begion link")
+            print("begin link")
 
     def keyPressEvent(self, event: QKeyEvent) -> None:
         if event.key() == Qt.Key.Key_W:
@@ -97,4 +104,5 @@ class GraphicView(QGraphicsView):
 
     def mouseReleaseEvent(self, event):
         self.startPos = None
+        self.start_link = None
         super(GraphicView, self).mouseReleaseEvent(event)
