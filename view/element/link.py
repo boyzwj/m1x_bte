@@ -7,41 +7,45 @@ import uuid
 from view.element.node import *
 
 
-class QLink(QGraphicsItem):
-    def __init__(self, parent=None):
-        super(QLink, self).__init__(parent)
+class QLink(QGraphicsPathItem):
+    def __init__(self, line):
+        super(QLink, self).__init__()
         self.setFlag(QGraphicsItem.GraphicsItemFlag.ItemIsSelectable, False)
         self.setFlag(QGraphicsItem.GraphicsItemFlag.ItemIsFocusable, False)
-        # self.setFlag(QGraphicsItem.GraphicsItemFlag.ItemSendsScenePositionChanges, False)
-        # self.setFlag(QGraphicsItem.GraphicsItemFlag.ItemIsMovable, False)
-        self.__width = 100
-        self.__height = 100
+        self.setFlag(QGraphicsItem.GraphicsItemFlag.ItemSendsScenePositionChanges, False)
+        self.setFlag(QGraphicsItem.GraphicsItemFlag.ItemIsMovable, False)
+        pen = QPen()
+        pen.setWidth(2)
+        pen.setColor(QColor(188, 66, 245))
+        self.setPen(pen)
         self.start_position: QPointF = self.scenePos()
         self.end_position: QPointF = self.scenePos()
+        self.set_line(line)
 
-    def boundingRect(self) -> QRectF:
-        rect = QRectF(0, 0, self.__width, self.__height)
-        return rect
-
-    def set_end_position(self, position: QPointF):
-        self.end_position = position
+    def set_line(self, line: QLineF):
+        self.start_position = line.p1()
+        self.end_position = line.p2()
+        path = self.get_bezier_path()
+        self.setPath(path)
         self.update()
 
-    def set_start_position(self, position: QPointF):
-        self.start_position = position
+    def get_bezier_path(self):
+        path = QPainterPath(self.start_position)
+        dx = self.end_position.x() - self.start_position.x()
+        dy = self.end_position.y() - self.start_position.y()
+        p1 = QPointF(self.start_position.x() + dx/2, self.start_position.y())
+        p2 = QPointF(self.start_position.x() + dx/2, self.start_position.y() + dy)
+        path.cubicTo(p1, p2, self.end_position)
+        return path
 
-    def paint(self, painter: QPainter, option: QStyleOptionGraphicsItem, widget: QWidget = ...) -> None:
-        if self.start_position is not None and self.end_position is not None:
-            print("fucking")
-            painter.save()
-            painter.setRenderHint(QPainter.Antialiasing, True)
-
-            pen = QPen()
-            pen.setWidth(5)
-            pen.setColor(Qt.red)
-            painter.setPen(pen)
-            print(self.start_position)
-            print(self.end_position)
-            painter.drawLine(self.start_position, self.end_position)
-            painter.restore()
+    # def paint(self, painter: QPainter, option: QStyleOptionGraphicsItem, widget: QWidget = ...) -> None:
+    #     if self.start_position is not None and self.end_position is not None:
+    #         painter.save()
+    #         pen = QPen()
+    #         pen.setWidth(2)
+    #         pen.setColor(QColor(188, 66, 245))
+    #         painter.setPen(pen)
+    #         path = self.get_bezier_path()
+    #         painter.drawPath(path)
+    #         painter.restore()
 

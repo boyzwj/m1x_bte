@@ -10,7 +10,8 @@ class GraphicView(QGraphicsView):
         super(GraphicView, self).__init__(parent)
         self.startPos = None
         self.start_link: QNode = None
-        self.tmp_link: QGraphicsLineItem = None
+        self.tmp_link: QLink = None
+        self.setRenderHint(QPainter.Antialiasing, True)
         self.setupUi()
     def setupUi(self):
         self.setMouseTracking(True)
@@ -19,6 +20,11 @@ class GraphicView(QGraphicsView):
         # self.scene().addItem(self.tmp_link)
     def add_node(self, node: QNode):
         self.scene().addItem(node)
+
+    def link_nodes(self, parent_node: QNode, child_node: QNode):
+        print(f"link nodes {parent_node.name} ==> {child_node.name}")
+
+
 
     def wheelEvent(self, event: QWheelEvent) -> None:
         zoom_in_factor = 1.1
@@ -57,6 +63,10 @@ class GraphicView(QGraphicsView):
                     self.start_link = None
             else:
                 super(GraphicView, self).mousePressEvent(event)
+        if event.button() == Qt.MouseButton.RightButton:
+            item = self.scene().itemAt(self.mapToScene(event.pos()), QTransform())
+            if item is not None:
+                self.start_link = item
         else:
             super(GraphicView, self).mousePressEvent(event)
 
@@ -76,16 +86,28 @@ class GraphicView(QGraphicsView):
             self.setSceneRect(self.sceneRect().translated(delta_x, delta_y))
             # update the new origin point to the current position
             self.startPos = event.pos()
-        elif self.start_link is not None and QApplication.keyboardModifiers() & Qt.KeyboardModifier.ControlModifier:
-            line = QLineF(self.start_link.scenePos(),event.scenePosition())
+        elif self.start_link is not None:
+            line = QLineF(self.start_link.link_start_pos(), self.mapToScene(event.pos()))
             if self.tmp_link is None:
-                self.tmp_link = QGraphicsLineItem(line)
+                self.tmp_link = QLink(line)
+                # self.tmp_link.
                 print("add tmp link to graphics")
                 self.scene().addItem(self.tmp_link)
             else:
-                self.tmp_link.setLine(line)
+                self.tmp_link.set_line(line)
         else:
             super(GraphicView, self).mouseMoveEvent(event)
+
+    def mouseReleaseEvent(self, event):
+        if self.start_link is not None:
+            self.scene().removeItem(self.tmp_link)
+            self.tmp_link = None
+            item = self.scene().itemAt(self.mapToScene(event.pos()), QTransform())
+            if isinstance(item, QNode):
+                self.link_nodes(self.start_link, item)
+            self.start_link = None
+
+        super(GraphicView, self).mouseReleaseEvent(event)
 
     def mouseDoubleClickEvent(self, event: QMouseEvent):
         if len(self.scene().selectedItems()) == 1:
@@ -102,7 +124,3 @@ class GraphicView(QGraphicsView):
             print("D")
         return super().keyPressEvent(event)
 
-    def mouseReleaseEvent(self, event):
-        self.startPos = None
-        self.start_link = None
-        super(GraphicView, self).mouseReleaseEvent(event)
