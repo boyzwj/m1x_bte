@@ -7,9 +7,9 @@ import uuid
 from view.element.node import *
 
 
-class QLink(QGraphicsPathItem):
+class TmpLink(QGraphicsPathItem):
     def __init__(self, line):
-        super(QLink, self).__init__()
+        super(TmpLink, self).__init__()
         self.setFlag(QGraphicsItem.GraphicsItemFlag.ItemIsSelectable, False)
         self.setFlag(QGraphicsItem.GraphicsItemFlag.ItemIsFocusable, False)
         self.setFlag(QGraphicsItem.GraphicsItemFlag.ItemSendsScenePositionChanges, False)

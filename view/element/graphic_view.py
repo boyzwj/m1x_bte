@@ -2,28 +2,38 @@ from PySide6.QtWidgets import *
 from PySide6.QtGui import *
 from PySide6.QtCore import *
 from view.element.node import *
-from view.element.link import *
+from view.element.tmp_link import *
 
 
 class GraphicView(QGraphicsView):
+    nodes = {}
+    links = {}
+
     def __init__(self, parent: QWidget):
         super(GraphicView, self).__init__(parent)
         self.startPos = None
-        self.start_link: QNode = None
-        self.tmp_link: QLink = None
+        self.start_link = None
+        self.tmp_link = None
         self.setRenderHint(QPainter.Antialiasing, True)
-        self.setupUi()
-    def setupUi(self):
+        self.setup_ui()
+
+    def setup_ui(self):
         self.setMouseTracking(True)
         self.setScene(QGraphicsScene())
-        # self.tmp_link = QLink()
-        # self.scene().addItem(self.tmp_link)
+
     def add_node(self, node: QNode):
+        self.nodes[node.GUID] = node
         self.scene().addItem(node)
 
     def link_nodes(self, parent_node: QNode, child_node: QNode):
-        print(f"link nodes {parent_node.name} ==> {child_node.name}")
+        self.nodes[child_node.parent_GUID].remove_child(child_node.GUID)
+        child_node.parent_GUID = ""
+        parent_node.add_child(child_node)
+        self.add_link(parent_node, child_node)
 
+
+    def add_link(self,parent_node,child_node):
+        print("add link")
 
 
     def wheelEvent(self, event: QWheelEvent) -> None:
@@ -32,7 +42,7 @@ class GraphicView(QGraphicsView):
 
         # Set Anchors
 
-        # Save the scene pos
+        # Save the scene sda pos
         old_pos = self.mapToScene(event.position().toPoint())
         self.centerOn(old_pos)
         # Zoom
@@ -48,6 +58,7 @@ class GraphicView(QGraphicsView):
         # Move scene to old position
         delta = new_pos - old_pos
         self.translate(delta.x(), delta.y())
+
 
     def mousePressEvent(self, event):
         if event.button() == Qt.MouseButton.MiddleButton:
@@ -70,6 +81,7 @@ class GraphicView(QGraphicsView):
         else:
             super(GraphicView, self).mousePressEvent(event)
 
+
     def mouseMoveEvent(self, event):
         if self.startPos is not None:
             # compute the difference between the current cursor position and the
@@ -86,10 +98,12 @@ class GraphicView(QGraphicsView):
             self.setSceneRect(self.sceneRect().translated(delta_x, delta_y))
             # update the new origin point to the current position
             self.startPos = event.pos()
-        elif self.start_link is not None:
-            line = QLineF(self.start_link.link_start_pos(), self.mapToScene(event.pos()))
+        elif isinstance(self.start_link, QNode):
+            p1: QPointF = self.start_link.link_start_pos()
+            p2: QPointF = self.mapToScene(event.pos())
+            line = QLineF(p1, p2)
             if self.tmp_link is None:
-                self.tmp_link = QLink(line)
+                self.tmp_link = TmpLink(line)
                 # self.tmp_link.
                 print("add tmp link to graphics")
                 self.scene().addItem(self.tmp_link)
@@ -97,6 +111,7 @@ class GraphicView(QGraphicsView):
                 self.tmp_link.set_line(line)
         else:
             super(GraphicView, self).mouseMoveEvent(event)
+
 
     def mouseReleaseEvent(self, event):
         if self.start_link is not None:
@@ -109,9 +124,11 @@ class GraphicView(QGraphicsView):
 
         super(GraphicView, self).mouseReleaseEvent(event)
 
+
     def mouseDoubleClickEvent(self, event: QMouseEvent):
         if len(self.scene().selectedItems()) == 1:
             print("begin link")
+
 
     def keyPressEvent(self, event: QKeyEvent) -> None:
         if event.key() == Qt.Key.Key_W:
@@ -123,4 +140,3 @@ class GraphicView(QGraphicsView):
         elif event.key() == Qt.Key.Key_D:
             print("D")
         return super().keyPressEvent(event)
-

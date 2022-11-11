@@ -7,7 +7,13 @@ import uuid
 
 
 class QNode(QGraphicsItem):
-    def __init__(self, parent=None, node_name =  "") -> None:
+    GUID = ""
+    folded = False
+    child_nodes = []
+    parent_node = ""
+    params = {}
+
+    def __init__(self, parent = None, node_name =  "") -> None:
         super(QNode, self).__init__(parent)
         self.name = "Action"
         self.__width = 110
@@ -15,6 +21,9 @@ class QNode(QGraphicsItem):
         self.__head_range = 10
         self.head_position = QPointF(-self.__width/2 + self.__head_range, 0)
         self.tail_position = QPointF(self.__width/2 - self.__head_range, 0)
+        self.child_GUIDS = []
+        self.parent_GUID = ""
+        self.params = {}
         if node_name != "Root":
             self.GUID = str(uuid.uuid4())
         else:
@@ -23,6 +32,17 @@ class QNode(QGraphicsItem):
         self.setFlag(QGraphicsItem.GraphicsItemFlag.ItemIsSelectable |
                      QGraphicsItem.GraphicsItemFlag.ItemIsMovable)
 
+    def add_child(self, child):
+        if child.GUID not in self.child_GUIDS and child.GUID != self.GUID:
+            self.child_GUIDS.append(child.GUID)
+            child.parent_GUID = self.GUID
+
+
+    def remove_child(self, t_guid: str):
+        for child_GUID in self.child_GUIDS:
+            if child_GUID == t_guid:
+                self.child_GUIDS.remove(child_GUID)
+                break
 
     def link_start_pos(self) -> QPointF:
         return self.scenePos() + self.tail_position
@@ -33,7 +53,6 @@ class QNode(QGraphicsItem):
     def itemChange(self, change, value):
         print(change, value)
         return value
-
 
     def boundingRect(self) -> QRectF:
         x1 = -self.__width/2
@@ -49,9 +68,7 @@ class QNode(QGraphicsItem):
         return rect
 
     def paint(self, painter: QPainter, option: QStyleOptionGraphicsItem, widget: QWidget = ...) -> None:
-        # painter.setRenderHint(QPainter.Antialiasing, True)
         self.draw_bg(painter)
-
         self.draw_text(painter)
 
     def draw_text(self, painter):

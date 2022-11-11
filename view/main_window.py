@@ -3,7 +3,7 @@ from PySide6.QtWidgets import *
 from PySide6 import QtCore, QtGui
 from PySide6.QtGui import *
 from view.element.node import *
-from view.element.link import *
+from view.element.tmp_link import *
 
 from view.element.graphic_view import *
 
