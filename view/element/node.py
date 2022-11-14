@@ -37,7 +37,6 @@ class QNode(QGraphicsItem):
             self.child_GUIDS.append(child.GUID)
             child.parent_GUID = self.GUID
 
-
     def remove_child(self, t_guid: str):
         for child_GUID in self.child_GUIDS:
             if child_GUID == t_guid:
@@ -51,7 +50,6 @@ class QNode(QGraphicsItem):
         return self.scenePos() + self.head_position
 
     def itemChange(self, change, value):
-        print(change, value)
         return value
 
     def boundingRect(self) -> QRectF:

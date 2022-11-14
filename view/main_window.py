@@ -26,6 +26,10 @@ class MainWindow(QMainWindow):
         self.graphicsView.add_node(node1)
         node1.setPos(100, 100)
 
-        node2 = QNode(node_name="Action")
+        node2 = QNode(node_name="Action1")
         self.graphicsView.add_node(node2)
         node2.setPos(300, 300)
+
+        node3 = QNode(node_name="Action2")
+        self.graphicsView.add_node(node3)
+        node3.setPos(300, 300)

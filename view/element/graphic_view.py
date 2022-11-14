@@ -3,7 +3,7 @@ from PySide6.QtGui import *
 from PySide6.QtCore import *
 from view.element.node import *
 from view.element.tmp_link import *
-
+from view.element.link import *
 
 class GraphicView(QGraphicsView):
     nodes = {}
@@ -26,15 +26,36 @@ class GraphicView(QGraphicsView):
         self.scene().addItem(node)
 
     def link_nodes(self, parent_node: QNode, child_node: QNode):
-        self.nodes[child_node.parent_GUID].remove_child(child_node.GUID)
-        child_node.parent_GUID = ""
-        parent_node.add_child(child_node)
-        self.add_link(parent_node, child_node)
+        if parent_node.GUID == child_node.GUID:
+            return
+        if parent_node.GUID in child_node.child_GUIDS:
+            self.remove_link(f"{child_node.GUID}@{parent_node.GUID}")
+            child_node.remove_child(parent_node.GUID)
+            parent_node.parent_GUID = ""
 
+        old_parent = self.nodes.get(child_node.parent_GUID)
+        if old_parent is not None:
+            self.remove_link(f"{old_parent.GUID}@{child_node.GUID}")
+            old_parent.remove_child(child_node.GUID)
+            child_node.parent_GUID = ""
+            if old_parent.GUID != parent_node.GUID:
+                parent_node.add_child(child_node)
+                self.add_link(parent_node, child_node)
+        else:
+            parent_node.add_child(child_node)
+            self.add_link(parent_node, child_node)
 
-    def add_link(self,parent_node,child_node):
-        print("add link")
+    def add_link(self, parent_node, child_node):
+        link_id = f"{parent_node.GUID}@{child_node.GUID}"
+        if self.links.get(link_id) is None:
+            link_item = Link(parent_node, child_node)
+            self.scene().addItem(link_item)
+            self.links[link_id] = link_item
 
+    def remove_link(self, link_id):
+        if self.links.get(link_id) is not None:
+            self.scene().removeItem(self.links[link_id])
+            del self.links[link_id]
 
     def wheelEvent(self, event: QWheelEvent) -> None:
         zoom_in_factor = 1.1
@@ -59,7 +80,6 @@ class GraphicView(QGraphicsView):
         delta = new_pos - old_pos
         self.translate(delta.x(), delta.y())
 
-
     def mousePressEvent(self, event):
         if event.button() == Qt.MouseButton.MiddleButton:
             # store the origin point
@@ -81,9 +101,8 @@ class GraphicView(QGraphicsView):
         else:
             super(GraphicView, self).mousePressEvent(event)
 
-
     def mouseMoveEvent(self, event):
-        if self.startPos is not None:
+        if self.startPos is not None and QApplication.mouseButtons() == Qt.MouseButton.MiddleButton:
             # compute the difference between the current cursor position and the
             # previous saved origin point
             delta = self.startPos - event.pos()
@@ -98,7 +117,7 @@ class GraphicView(QGraphicsView):
             self.setSceneRect(self.sceneRect().translated(delta_x, delta_y))
             # update the new origin point to the current position
             self.startPos = event.pos()
-        elif isinstance(self.start_link, QNode):
+        elif isinstance(self.start_link, QNode) and QApplication.mouseButtons() == Qt.MouseButton.RightButton:
             p1: QPointF = self.start_link.link_start_pos()
             p2: QPointF = self.mapToScene(event.pos())
             line = QLineF(p1, p2)
@@ -109,8 +128,31 @@ class GraphicView(QGraphicsView):
                 self.scene().addItem(self.tmp_link)
             else:
                 self.tmp_link.set_line(line)
+        elif QApplication.mouseButtons() == Qt.MouseButton.LeftButton:
+            super(GraphicView, self).mouseMoveEvent(event)
+            nodes = self.scene().selectedItems()
+            for node in nodes:
+                self.update_related_links(node)
+
         else:
             super(GraphicView, self).mouseMoveEvent(event)
+
+    def update_related_links(self, node: QNode):
+        if node is None:
+            return
+        link_guids = [f"{node.parent_GUID}@{node.GUID}"]
+        for guid in node.child_GUIDS:
+            if guid not in link_guids:
+                link_guids.append(f"{node.GUID}@{guid}")
+        for link_guid in link_guids:
+            link = self.links.get(link_guid)
+            if link is not None:
+                link.up()
+
+
+
+
+
 
 
     def mouseReleaseEvent(self, event):
@@ -121,14 +163,14 @@ class GraphicView(QGraphicsView):
             if isinstance(item, QNode):
                 self.link_nodes(self.start_link, item)
             self.start_link = None
+        elif self.startPos is not None:
+            self.startPos = None
 
         super(GraphicView, self).mouseReleaseEvent(event)
-
 
     def mouseDoubleClickEvent(self, event: QMouseEvent):
         if len(self.scene().selectedItems()) == 1:
             print("begin link")
-
 
     def keyPressEvent(self, event: QKeyEvent) -> None:
         if event.key() == Qt.Key.Key_W:
