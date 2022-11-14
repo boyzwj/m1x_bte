@@ -13,7 +13,7 @@ class QNode(QGraphicsItem):
     parent_node = ""
     params = {}
 
-    def __init__(self, parent = None, node_name =  "") -> None:
+    def __init__(self, parent = None, node_name = "") -> None:
         super(QNode, self).__init__(parent)
         self.name = "Action"
         self.__width = 110
