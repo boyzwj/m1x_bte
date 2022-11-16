@@ -29,8 +29,8 @@ class Link(QGraphicsPathItem):
         path = QPainterPath(start_pos)
         dx = end_pos.x() - start_pos.x()
         dy = end_pos.y() - start_pos.y()
-        p1 = QPointF(start_pos.x() + dx/2, start_pos.y())
-        p2 = QPointF(start_pos.x() + dx/2, start_pos.y() + dy)
+        p1 = QPointF(start_pos.x() + dx / 2, start_pos.y())
+        p2 = QPointF(start_pos.x() + dx / 2, start_pos.y() + dy)
         path.cubicTo(p1, p2, end_pos)
         return path
 
@@ -38,6 +38,5 @@ class Link(QGraphicsPathItem):
         path = self.get_bezier_path()
         self.setPath(path)
         self.update()
-
 
 

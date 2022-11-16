@@ -14,9 +14,7 @@ class TmpLink(QGraphicsPathItem):
         self.setFlag(QGraphicsItem.GraphicsItemFlag.ItemIsFocusable, False)
         self.setFlag(QGraphicsItem.GraphicsItemFlag.ItemSendsScenePositionChanges, False)
         self.setFlag(QGraphicsItem.GraphicsItemFlag.ItemIsMovable, False)
-        pen = QPen()
-        pen.setWidth(2)
-        pen.setColor(QColor(188, 66, 245))
+        pen = QPen(QColor(188, 66, 245), 2, Qt.DotLine)
         self.setPen(pen)
         self.start_position: QPointF = self.scenePos()
         self.end_position: QPointF = self.scenePos()
@@ -33,8 +31,8 @@ class TmpLink(QGraphicsPathItem):
         path = QPainterPath(self.start_position)
         dx = self.end_position.x() - self.start_position.x()
         dy = self.end_position.y() - self.start_position.y()
-        p1 = QPointF(self.start_position.x() + dx/2, self.start_position.y())
-        p2 = QPointF(self.start_position.x() + dx/2, self.start_position.y() + dy)
+        p1 = QPointF(self.start_position.x() + dx / 2, self.start_position.y())
+        p2 = QPointF(self.start_position.x() + dx / 2, self.start_position.y() + dy)
         path.cubicTo(p1, p2, self.end_position)
         return path
 
@@ -48,4 +46,3 @@ class TmpLink(QGraphicsPathItem):
     #         path = self.get_bezier_path()
     #         painter.drawPath(path)
     #         painter.restore()
-

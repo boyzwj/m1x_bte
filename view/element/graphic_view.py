@@ -14,12 +14,19 @@ class GraphicView(QGraphicsView):
         self.startPos = None
         self.start_link = None
         self.tmp_link = None
+        self.tmp_sel_rect = None
+        self.sel_start_pos = None
+        self.adding_node_name = None
         self.setRenderHint(QPainter.Antialiasing, True)
         self.setup_ui()
 
     def setup_ui(self):
-        self.setMouseTracking(True)
         self.setScene(QGraphicsScene())
+        self.setMouseTracking(True)
+        self.setTransformationAnchor(QGraphicsView.AnchorUnderMouse)
+        self.setViewportUpdateMode(QGraphicsView.SmartViewportUpdate)
+        self.setAcceptDrops(True)
+        self.setDragMode(QGraphicsView.DragMode.NoDrag)
 
     def add_node(self, node: QNode):
         self.nodes[node.GUID] = node
@@ -56,6 +63,34 @@ class GraphicView(QGraphicsView):
         if self.links.get(link_id) is not None:
             self.scene().removeItem(self.links[link_id])
             del self.links[link_id]
+            
+            
+    def dragEnterEvent(self, e: QDragEnterEvent) -> None:
+        if e.mimeData().hasFormat('application/x-qabstractitemmodeldatalist'):
+            data = e.mimeData()
+            source_item = QStandardItemModel()
+            source_item.dropMimeData(data, Qt.CopyAction, 0, 0, QModelIndex())
+            self.adding_node_name = source_item.item(0, 0).text()
+            if self.adding_node_name in g.config.nodes.keys():
+                e.acceptProposedAction()
+
+
+                # return super().dragEnterEvent(e)
+    def dragMoveEvent(self, e: QDragMoveEvent) -> None:
+        e.accept()
+                
+        # return super().dragMoveEvent(e)            
+            
+    def dropEvent(self, e: QDropEvent) -> None:
+        if self.adding_node_name in g.config.nodes.keys() and self.adding_node_name != "Root":
+            node = QNode(node_name=self.adding_node_name)
+            self.add_node(node)
+            node.setPos( self.mapToScene(e.position().toPoint()))            
+        else:
+            self.adding_node_name = None
+            
+
+            
 
     def wheelEvent(self, event: QWheelEvent) -> None:
         zoom_in_factor = 1.1
@@ -84,20 +119,18 @@ class GraphicView(QGraphicsView):
         if event.button() == Qt.MouseButton.MiddleButton:
             # store the origin point
             self.startPos = event.pos()
-        if event.button() == Qt.MouseButton.LeftButton:
-            if QApplication.keyboardModifiers() & Qt.KeyboardModifier.ControlModifier:
-                super(GraphicView, self).mousePressEvent(event)
-                nodes = self.scene().selectedItems()
-                if len(nodes) > 0:
-                    self.start_link = nodes[0]
-                else:
-                    self.start_link = None
-            else:
-                super(GraphicView, self).mousePressEvent(event)
         if event.button() == Qt.MouseButton.RightButton:
             item = self.scene().itemAt(self.mapToScene(event.pos()), QTransform())
-            if item is not None:
-                self.start_link = item
+            if item is None:
+                return
+            if item.tail_position is None:
+                return
+            self.start_link = item
+        if event.button() == Qt.MouseButton.LeftButton:
+            super(GraphicView, self).mousePressEvent(event)
+            item = self.scene().itemAt(self.mapToScene(event.pos()), QTransform())
+            if item is None:
+                self.sel_start_pos = self.mapToScene(event.pos())
         else:
             super(GraphicView, self).mousePressEvent(event)
 
@@ -123,17 +156,27 @@ class GraphicView(QGraphicsView):
             line = QLineF(p1, p2)
             if self.tmp_link is None:
                 self.tmp_link = TmpLink(line)
-                # self.tmp_link.
-                print("add tmp link to graphics")
                 self.scene().addItem(self.tmp_link)
             else:
                 self.tmp_link.set_line(line)
         elif QApplication.mouseButtons() == Qt.MouseButton.LeftButton:
             super(GraphicView, self).mouseMoveEvent(event)
             nodes = self.scene().selectedItems()
-            for node in nodes:
-                self.update_related_links(node)
-
+            if self.sel_start_pos is None:
+                for node in nodes:
+                    self.update_related_links(node)
+            else:
+                p1 = self.sel_start_pos
+                p2 = self.mapToScene(event.pos())
+                sp1 = QPointF(min(p1.x(), p2.x()), min(p1.y(), p2.y()))
+                sp2 = QPointF(max(p1.x(), p2.x()), max(p1.y(), p2.y()))
+                rect = QRectF(sp1, sp2)
+                if self.tmp_sel_rect is None:
+                    self.tmp_sel_rect = QGraphicsRectItem(rect)
+                    self.tmp_sel_rect.setPen(QPen(QColor(0, 240, 0), 1, Qt.SolidLine))
+                    self.scene().addItem(self.tmp_sel_rect)
+                else:
+                    self.tmp_sel_rect.setRect(rect)
         else:
             super(GraphicView, self).mouseMoveEvent(event)
 
@@ -149,12 +192,6 @@ class GraphicView(QGraphicsView):
             if link is not None:
                 link.up()
 
-
-
-
-
-
-
     def mouseReleaseEvent(self, event):
         if self.start_link is not None:
             self.scene().removeItem(self.tmp_link)
@@ -165,6 +202,13 @@ class GraphicView(QGraphicsView):
             self.start_link = None
         elif self.startPos is not None:
             self.startPos = None
+        elif self.sel_start_pos is not None:
+            items = self.scene().collidingItems(self.tmp_sel_rect, Qt.ItemSelectionMode.IntersectsItemShape)
+            for item in items:
+                item.setSelected(True)
+            self.sel_start_pos = None
+            self.scene().removeItem(self.tmp_sel_rect)
+            self.tmp_sel_rect = None
 
         super(GraphicView, self).mouseReleaseEvent(event)
 
@@ -181,4 +225,36 @@ class GraphicView(QGraphicsView):
             print("A")
         elif event.key() == Qt.Key.Key_D:
             print("D")
+        elif event.key() == Qt.Key.Key_Delete:
+            self.del_selected_nodes()
         return super().keyPressEvent(event)
+
+
+    def del_selected_nodes(self):
+        items = self.scene().selectedItems()
+        for item in items:
+            if item.node_type != "Root":
+                self.del_node(item)
+
+    def del_node(self, item: QNode):
+        parent_node = self.nodes.get(item.parent_GUID)
+        if parent_node is not None:
+            parent_node.remove_child(item.GUID)
+            self.remove_link(f"{parent_node.GUID}@{item.GUID}")
+        for c_guid in item.child_GUIDS:
+            self.nodes[c_guid].parent_GUID = ""
+            self.remove_link(f"{item.GUID}@{c_guid}")
+
+        self.nodes[item.GUID] = None
+        self.scene().removeItem(item)
+
+
+
+
+
+
+
+
+
+
+
