@@ -21,6 +21,8 @@ class GraphicView(QGraphicsView):
         self.setup_ui()
 
     def setup_ui(self):
+        self.horizontalSpacing = 180
+        self.verticalSpacing = 60
         self.setScene(QGraphicsScene())
         self.setMouseTracking(True)
         self.setTransformationAnchor(QGraphicsView.AnchorUnderMouse)
@@ -227,6 +229,8 @@ class GraphicView(QGraphicsView):
             print("D")
         elif event.key() == Qt.Key.Key_Delete:
             self.del_selected_nodes()
+        elif event.key() == Qt.Key.Key_Space:
+            self.align_nodes()
         return super().keyPressEvent(event)
 
 
@@ -249,7 +253,38 @@ class GraphicView(QGraphicsView):
         self.scene().removeItem(item)
 
 
+    def align_nodes(self):
+        self.leafCount = 0
+        self.depth = 0
+        self.movedNodes = []
+        o_pos = self.nodes['0'].pos()
+        self.align_nodeX('0')
+        dis = o_pos - self.nodes['0'].pos()
+        for i in range(len(self.movedNodes)):
+            n = self.movedNodes[i]
+            n.setPos(n.pos() + dis)
+            self.update_related_links(n)
+        
+    def align_nodeX(self, guid):
+        node = self.nodes[guid]
+        self.movedNodes.append(node)
+        if len(node.child_GUIDS) == 0:
+            self.leafCount += 1
+            x = self.depth * self.horizontalSpacing
+            y = self.leafCount * self.verticalSpacing
+        else:
+            ySum = 0
+            node.child_GUIDS.sort(key=lambda i: self.nodes[i].pos().y())
+            for cguid in node.child_GUIDS:
+                self.depth += 1
+                ySum += self.align_nodeX(cguid)
+                self.depth -= 1
 
+            x = self.depth * self.horizontalSpacing
+            y = ySum / len(node.child_GUIDS)
+        node.setPos(x, y)
+        self.update_related_links(node)
+        return y        
 
 
 

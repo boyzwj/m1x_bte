@@ -26,20 +26,4 @@ class MainWindow(QMainWindow):
         self.ui.horizontalLayout.addWidget(self.graphicsView)
         node1 = QNode(node_name="Root")
         self.graphicsView.add_node(node1)
-        node1.setPos(100, 100)
-
-        node2 = QNode(node_name="Print")
-        self.graphicsView.add_node(node2)
-        node2.setPos(100, 300)
-
-        node3 = QNode(node_name="Selector")
-        self.graphicsView.add_node(node3)
-        node3.setPos(300, 300)
-
-        node4 = QNode(node_name="HpGreater")
-        self.graphicsView.add_node(node4)
-        node4.setPos(300, 100)
-        
-        node5 = QNode(node_name="Invert")
-        self.graphicsView.add_node(node5)
-        node5.setPos(400, 400)
+        node1.setPos(0, 0)
