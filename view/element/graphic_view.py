@@ -265,9 +265,9 @@ class GraphicView(QGraphicsView):
             self.tmp_sel_rect = None
         super(GraphicView, self).mouseReleaseEvent(event)
 
-    def mouseDoubleClickEvent(self, event: QMouseEvent):
-        if len(self.scene().selectedItems()) == 1:
-            print("begin link")
+    # def mouseDoubleClickEvent(self, event: QMouseEvent):
+    #     if len(self.scene().selectedItems()) == 1:
+    #         print("begin link")
 
     def keyPressEvent(self, event: QKeyEvent) -> None:
         if event.key() == Qt.Key.Key_W:

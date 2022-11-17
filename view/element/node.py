@@ -6,6 +6,7 @@ import uuid
 import PySide6
 import weakref
 from core import g
+from view.element.node_dialog import NodeDialog
 
 
 class QNode(QGraphicsItem):
@@ -111,6 +112,13 @@ class QNode(QGraphicsItem):
     def draw_tail(self, painter: QPainter):
         if self.tail_position is not None:
             painter.drawEllipse(self.tail_position, self.__head_range, self.__head_range)
+
+
+
+    def mouseDoubleClickEvent(self, event: QGraphicsSceneMouseEvent) -> None:
+        print("fsdfsdfsdfs")
+        dialog = NodeDialog(self)
+        dialog.exec()
 
     # def mousePressEvent(self, event: QGraphicsSceneMouseEvent) -> None:
     #     if event.button() == Qt.MouseButton.RightButton:
