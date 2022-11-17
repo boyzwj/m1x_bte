@@ -4,6 +4,7 @@ from PySide6.QtCore import *
 from view.element.node import *
 from view.element.tmp_link import *
 from view.element.link import *
+import json
 
 class GraphicView(QGraphicsView):
     nodes = {}
@@ -11,6 +12,7 @@ class GraphicView(QGraphicsView):
 
     def __init__(self, parent: QWidget):
         super(GraphicView, self).__init__(parent)
+        self.file_name = None
         self.startPos = None
         self.start_link = None
         self.tmp_link = None
@@ -29,10 +31,59 @@ class GraphicView(QGraphicsView):
         self.setViewportUpdateMode(QGraphicsView.SmartViewportUpdate)
         self.setAcceptDrops(True)
         self.setDragMode(QGraphicsView.DragMode.NoDrag)
+        self.add_node(QNode(node_name="Root"))
+        
+    def save_file(self,file_name: str = None):
+        if file_name is not None:
+            self.file_name = file_name
+        g.save_file(self.nodes,self.file_name)
+        
+        
+    def load_file(self,file_name):
+        data = None
+        with open(file_name) as f:
+            content = f.read()
+            data = json.loads(content)
+            f.close()
+        if data is None:
+            return
+        self.clear_workspace()    
+        for guid, v in data.items():
+            name = v['name']
+            x = v['x']
+            y = v['y']
+            child_GUIDS = v['children']
+            parent = v['parent']
+            node = QNode(node_name = name,guid = guid)
+            node.child_GUIDS =  child_GUIDS
+            node.parent_GUID = parent
+            self.add_node(node,QPointF(x,y))
+        for guid,v in self.nodes.items():
+            for c_guid in v.child_GUIDS:
+                self.add_link(v,self.nodes[c_guid])
+           
+            
+            
+            
+    
+    
+    
+    
+    def clear_workspace(self):
+        self.scene().clear()
+        self.links = {}
+        self.nodes = {}
+        self.file_name = None
+            
+            
+        
 
-    def add_node(self, node: QNode):
+
+    def add_node(self, node: QNode, pos: QPointF =  None):
         self.nodes[node.GUID] = node
         self.scene().addItem(node)
+        if pos is not None:
+            node.setPos(pos)
 
     def link_nodes(self, parent_node: QNode, child_node: QNode):
         if parent_node.GUID == child_node.GUID:
@@ -200,18 +251,18 @@ class GraphicView(QGraphicsView):
             self.tmp_link = None
             item = self.scene().itemAt(self.mapToScene(event.pos()), QTransform())
             if isinstance(item, QNode):
-                self.link_nodes(self.start_link, item)
+                if item.node_type != "Root":
+                    self.link_nodes(self.start_link, item)
             self.start_link = None
         elif self.startPos is not None:
             self.startPos = None
-        elif self.sel_start_pos is not None:
+        elif self.sel_start_pos is not None and self.tmp_sel_rect is not None:
             items = self.scene().collidingItems(self.tmp_sel_rect, Qt.ItemSelectionMode.IntersectsItemShape)
             for item in items:
                 item.setSelected(True)
             self.sel_start_pos = None
             self.scene().removeItem(self.tmp_sel_rect)
             self.tmp_sel_rect = None
-
         super(GraphicView, self).mouseReleaseEvent(event)
 
     def mouseDoubleClickEvent(self, event: QMouseEvent):
@@ -248,8 +299,7 @@ class GraphicView(QGraphicsView):
         for c_guid in item.child_GUIDS:
             self.nodes[c_guid].parent_GUID = ""
             self.remove_link(f"{item.GUID}@{c_guid}")
-
-        self.nodes[item.GUID] = None
+        del self.nodes[item.GUID]
         self.scene().removeItem(item)
 
 

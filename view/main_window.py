@@ -24,6 +24,25 @@ class MainWindow(QMainWindow):
         self.graphicsView = GraphicView(self.ui.centralwidget)
         self.graphicsView.setObjectName(u"graphicsView")
         self.ui.horizontalLayout.addWidget(self.graphicsView)
-        node1 = QNode(node_name="Root")
-        self.graphicsView.add_node(node1)
-        node1.setPos(0, 0)
+        self.ui.action_open.triggered.connect(self.action_open)
+        self.ui.action_save.triggered.connect(self.action_save)
+        self.ui.action_attach.triggered.connect(self.action_attach)
+        
+    
+    @Slot()
+    def action_open(self):
+        dialog = QFileDialog()
+        filename,_ext = dialog.getOpenFileName(self,"Open file","work_data","json(*.json)")
+        self.graphicsView.load_file(file_name = filename)
+    
+    @Slot()
+    def action_save(self):
+        if self.graphicsView.file_name is None:
+            dialog = QFileDialog()
+            filename,_ext = dialog.getSaveFileName(self, "Save file","work_data","json(*.json)")
+            self.graphicsView.save_file(file_name = filename)
+        else:
+            self.graphicsView.save_file()
+        
+    def action_attach(self):
+        print("do action attach")

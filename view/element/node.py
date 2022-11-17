@@ -15,7 +15,7 @@ class QNode(QGraphicsItem):
     parent_node = ""
     params = {}
 
-    def __init__(self, parent=None, node_name="") -> None:
+    def __init__(self, parent=None, node_name="",guid: str = None) -> None:
         super(QNode, self).__init__(parent)
         self.name = node_name
         self.__width = 110
@@ -26,10 +26,12 @@ class QNode(QGraphicsItem):
         self.params = {}
         self.bg_color = QColor(0, 180, 180)
         self.sel_color = QColor(0, 120, 230)
-        if self.name != "Root":
-            self.GUID = str(uuid.uuid4())
-        else:
+        if self.name == "Root":
             self.GUID = "0"
+        elif guid is not None:
+            self.GUID = guid
+        else:
+            self.GUID = str(uuid.uuid4())
         cfg_data = g.config.nodes.get(self.name)
         if cfg_data is None:
             self.node_type = "Action"

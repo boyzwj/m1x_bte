@@ -55,25 +55,42 @@
    </property>
    <widget class="QMenu" name="menu">
     <property name="title">
-     <string>文件</string>
+     <string>File</string>
     </property>
-    <addaction name="actionopen_2"/>
+    <addaction name="action_open"/>
+    <addaction name="action_save"/>
+   </widget>
+   <widget class="QMenu" name="menuDebug">
+    <property name="title">
+     <string>Debug</string>
+    </property>
+    <addaction name="action_attach"/>
    </widget>
    <addaction name="menu"/>
+   <addaction name="menuDebug"/>
   </widget>
-  <action name="actionopen">
+  <action name="action_open">
    <property name="text">
     <string>open</string>
    </property>
-  </action>
-  <action name="actionadd_action">
-   <property name="text">
-    <string>add action</string>
+   <property name="shortcut">
+    <string>Ctrl+O</string>
    </property>
   </action>
-  <action name="actionopen_2">
+  <action name="action_save">
    <property name="text">
-    <string>open</string>
+    <string>save</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+S</string>
+   </property>
+  </action>
+  <action name="action_attach">
+   <property name="text">
+    <string>attach</string>
+   </property>
+   <property name="shortcut">
+    <string>Ctrl+D</string>
    </property>
   </action>
  </widget>
