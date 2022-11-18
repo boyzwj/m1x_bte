@@ -225,6 +225,8 @@ class GraphicView(QGraphicsView):
         elif QApplication.mouseButtons() == Qt.MouseButton.LeftButton:
             super(GraphicView, self).mouseMoveEvent(event)
             nodes = self.scene().selectedItems()
+            if len(nodes) > 0:
+                self.sel_start_pos = None
             if self.sel_start_pos is None:
                 for node in nodes:
                     self.update_related_links(node)
