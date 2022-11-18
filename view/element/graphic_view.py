@@ -32,11 +32,19 @@ class GraphicView(QGraphicsView):
         self.setAcceptDrops(True)
         self.setDragMode(QGraphicsView.DragMode.NoDrag)
         self.add_node(QNode(node_name="Root"))
+        self.timer_id = self.startTimer(1000, timerType=Qt.VeryCoarseTimer)
         
+        
+    def timerEvent(self, event):
+        if g.need_save == True:
+            g.need_save = False
+            self.save_file()
+                
     def save_file(self,file_name: str = None):
         if file_name is not None:
             self.file_name = file_name
-        g.save_file(self.nodes,self.file_name)
+        if self.file_name is not None:            
+            g.save_file(self.nodes,self.file_name)
         
         
     def load_file(self,file_name):
@@ -47,14 +55,16 @@ class GraphicView(QGraphicsView):
             f.close()
         if data is None:
             return
-        self.clear_workspace()    
+        self.clear_workspace()
+        self.file_name = file_name
         for guid, v in data.items():
             name = v['name']
             x = v['x']
             y = v['y']
             child_GUIDS = v['children']
             parent = v['parent']
-            node = QNode(node_name = name,guid = guid)
+            params = v['params']
+            node = QNode(node_name = name,guid = guid,params= params)
             node.child_GUIDS =  child_GUIDS
             node.parent_GUID = parent
             self.add_node(node,QPointF(x,y))
@@ -169,23 +179,23 @@ class GraphicView(QGraphicsView):
         self.translate(delta.x(), delta.y())
 
     def mousePressEvent(self, event):
+        super(GraphicView, self).mousePressEvent(event)
         if event.button() == Qt.MouseButton.MiddleButton:
             # store the origin point
             self.startPos = event.pos()
-        if event.button() == Qt.MouseButton.RightButton:
+        elif event.button() == Qt.MouseButton.RightButton:
             item = self.scene().itemAt(self.mapToScene(event.pos()), QTransform())
             if item is None:
                 return
             if item.tail_position is None:
                 return
             self.start_link = item
-        if event.button() == Qt.MouseButton.LeftButton:
-            super(GraphicView, self).mousePressEvent(event)
-            item = self.scene().itemAt(self.mapToScene(event.pos()), QTransform())
-            if item is None:
+        elif event.button() == Qt.MouseButton.LeftButton:
+            if len(self.scene().selectedItems()) == 0 :
                 self.sel_start_pos = self.mapToScene(event.pos())
         else:
-            super(GraphicView, self).mousePressEvent(event)
+            pass
+            # sup
 
     def mouseMoveEvent(self, event):
         if self.startPos is not None and QApplication.mouseButtons() == Qt.MouseButton.MiddleButton:
@@ -246,6 +256,8 @@ class GraphicView(QGraphicsView):
                 link.up()
 
     def mouseReleaseEvent(self, event):
+        if len(self.scene().selectedItems()):
+            g.need_save = True
         if self.start_link is not None:
             self.scene().removeItem(self.tmp_link)
             self.tmp_link = None
@@ -287,6 +299,7 @@ class GraphicView(QGraphicsView):
 
     def del_selected_nodes(self):
         items = self.scene().selectedItems()
+        g.need_save = True
         for item in items:
             if item.node_type != "Root":
                 self.del_node(item)
@@ -304,6 +317,7 @@ class GraphicView(QGraphicsView):
 
 
     def align_nodes(self):
+        g.need_save = True
         self.leafCount = 0
         self.depth = 0
         self.movedNodes = []

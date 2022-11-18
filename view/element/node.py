@@ -16,7 +16,7 @@ class QNode(QGraphicsItem):
     parent_node = ""
     params = {}
 
-    def __init__(self, parent=None, node_name="",guid: str = None) -> None:
+    def __init__(self, parent=None, node_name="",guid: str = None,params = {}) -> None:
         super(QNode, self).__init__(parent)
         self.name = node_name
         self.__width = 110
@@ -24,9 +24,18 @@ class QNode(QGraphicsItem):
         self.__head_range = 10
         self.child_GUIDS = []
         self.parent_GUID = ""
+        self.data =  g.config.nodes[self.name]["params"]
         self.params = {}
-        self.bg_color = QColor(0, 180, 180)
-        self.sel_color = QColor(0, 120, 230)
+        for k,tp in self.data.items():
+            saved_value = params.get(k)
+            if saved_value is None:
+                if tp == "int":
+                    saved_value = 0
+                elif tp == "float":
+                    saved_value = 0
+                elif tp == "string":
+                    saved_value = ""
+            self.params[k] = saved_value
         if self.name == "Root":
             self.GUID = "0"
         elif guid is not None:
@@ -56,8 +65,10 @@ class QNode(QGraphicsItem):
         if child.GUID not in self.child_GUIDS and child.GUID != self.GUID:
             self.child_GUIDS.append(child.GUID)
             child.parent_GUID = self.GUID
+            g.need_save = True            
 
     def remove_child(self, t_guid: str):
+        g.need_save = True   
         for child_GUID in self.child_GUIDS:
             if child_GUID == t_guid:
                 self.child_GUIDS.remove(child_GUID)
@@ -69,8 +80,9 @@ class QNode(QGraphicsItem):
     def link_end_pos(self) -> QPointF:
         return self.scenePos() + QPointF(-self.__width / 2, 0)
 
-    def itemChange(self, change, value):
-        return value
+    # def itemChange(self, change, value):
+    #     print(change)
+    #     return value
 
     def boundingRect(self) -> QRectF:
         x1 = -self.__width / 2
@@ -114,11 +126,10 @@ class QNode(QGraphicsItem):
             painter.drawEllipse(self.tail_position, self.__head_range, self.__head_range)
 
 
-
     def mouseDoubleClickEvent(self, event: QGraphicsSceneMouseEvent) -> None:
-        print("fsdfsdfsdfs")
-        dialog = NodeDialog(self)
-        dialog.exec()
+        if len(self.params.keys()) > 0:
+            dialog = NodeDialog(self)
+            dialog.exec()
 
     # def mousePressEvent(self, event: QGraphicsSceneMouseEvent) -> None:
     #     if event.button() == Qt.MouseButton.RightButton:

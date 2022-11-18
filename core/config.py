@@ -6,22 +6,22 @@ class Config():
     data = {
         "last_project": "",
         "node_type": {
-            "Root": {"style": "background:#AABBCC;"},
-            "Composite": {"style": "background:#FFFFFF;"},
-            "Decorator": {"style": "background:#EEC211;"},
-            "Condition": {"style": "background:#A25EA2;"},
-            "Action": {"style": "background:#33CC8F;"}
+            "Root": {},
+            "Composite": {},
+            "Decorator": {},
+            "Condition": {},
+            "Action": {}
         },
         "nodes":
             {
-                "Root": {"type": "Root"},
-                "Sequence": {"type": "Composite"},
-                "RandomSequence": {"type": "Composite"},
-                "Selector": {"type": "Composite"},
-                "RandomSelector": {"type": "Composite"},
-                "Invert": {"type": "Decorator"},
-                "HpGreater": {"type": "Condition"},
-                "Print": {"type": "Action"}
+                "Root": {"type": "Root","params": {}},
+                "Sequence": {"type": "Composite","params": {}},
+                "RandomSequence": {"type": "Composite","params": {}},
+                "Selector": {"type": "Composite","params": {}},
+                "RandomSelector": {"type": "Composite","params": {}},
+                "Invert": {"type": "Decorator","params": {}},
+                "HpGreater": {"type": "Condition","params": {"value1":"int" , "value2":"int"}},
+                "Print": {"type": "Action","params": {"concent":"string"}},
              }
     }
 
