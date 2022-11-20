@@ -66,8 +66,15 @@
     </property>
     <addaction name="action_attach"/>
    </widget>
+   <widget class="QMenu" name="menusettings">
+    <property name="title">
+     <string>settings</string>
+    </property>
+    <addaction name="action_add_node"/>
+   </widget>
    <addaction name="menu"/>
    <addaction name="menuDebug"/>
+   <addaction name="menusettings"/>
   </widget>
   <action name="action_open">
    <property name="text">
@@ -91,6 +98,11 @@
    </property>
    <property name="shortcut">
     <string>Ctrl+D</string>
+   </property>
+  </action>
+  <action name="action_add_node">
+   <property name="text">
+    <string>add_node</string>
    </property>
   </action>
  </widget>

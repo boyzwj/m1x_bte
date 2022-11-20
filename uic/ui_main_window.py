@@ -36,6 +36,8 @@ class Ui_MainWindow(object):
         self.action_save.setObjectName(u"action_save")
         self.action_attach = QAction(MainWindow)
         self.action_attach.setObjectName(u"action_attach")
+        self.action_add_node = QAction(MainWindow)
+        self.action_add_node.setObjectName(u"action_add_node")
         self.centralwidget = QWidget(MainWindow)
         self.centralwidget.setObjectName(u"centralwidget")
         sizePolicy.setHeightForWidth(self.centralwidget.sizePolicy().hasHeightForWidth())
@@ -55,13 +57,17 @@ class Ui_MainWindow(object):
         self.menu.setObjectName(u"menu")
         self.menuDebug = QMenu(self.menubar)
         self.menuDebug.setObjectName(u"menuDebug")
+        self.menusettings = QMenu(self.menubar)
+        self.menusettings.setObjectName(u"menusettings")
         MainWindow.setMenuBar(self.menubar)
 
         self.menubar.addAction(self.menu.menuAction())
         self.menubar.addAction(self.menuDebug.menuAction())
+        self.menubar.addAction(self.menusettings.menuAction())
         self.menu.addAction(self.action_open)
         self.menu.addAction(self.action_save)
         self.menuDebug.addAction(self.action_attach)
+        self.menusettings.addAction(self.action_add_node)
 
         self.retranslateUi(MainWindow)
 
@@ -82,7 +88,9 @@ class Ui_MainWindow(object):
 #if QT_CONFIG(shortcut)
         self.action_attach.setShortcut(QCoreApplication.translate("MainWindow", u"Ctrl+D", None))
 #endif // QT_CONFIG(shortcut)
+        self.action_add_node.setText(QCoreApplication.translate("MainWindow", u"add_node", None))
         self.menu.setTitle(QCoreApplication.translate("MainWindow", u"File", None))
         self.menuDebug.setTitle(QCoreApplication.translate("MainWindow", u"Debug", None))
+        self.menusettings.setTitle(QCoreApplication.translate("MainWindow", u"settings", None))
     # retranslateUi
 

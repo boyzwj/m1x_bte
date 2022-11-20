@@ -5,8 +5,8 @@ from PySide6.QtGui import *
 from view.element.node import *
 from view.element.tmp_link import *
 from view.element.node_tree import *
+from view.element.add_node_dialog import *
 from view.element.graphic_view import *
-
 
 
 class MainWindow(QMainWindow):
@@ -27,6 +27,7 @@ class MainWindow(QMainWindow):
         self.ui.action_open.triggered.connect(self.action_open)
         self.ui.action_save.triggered.connect(self.action_save)
         self.ui.action_attach.triggered.connect(self.action_attach)
+        self.ui.action_add_node.triggered.connect(self.action_add_node)
         
     
     @Slot()
@@ -47,6 +48,11 @@ class MainWindow(QMainWindow):
             self.graphicsView.save_file(file_name = filename)
         else:
             self.graphicsView.save_file()
+
+    @Slot()
+    def action_add_node(self):
+        dialog = AddNodeDialog()
+        dialog.exec_()
         
     def action_attach(self):
         print("do action attach")

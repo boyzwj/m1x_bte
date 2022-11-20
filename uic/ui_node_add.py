@@ -16,8 +16,8 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QImage, QKeySequence, QLinearGradient, QPainter,
     QPalette, QPixmap, QRadialGradient, QTransform)
 from PySide6.QtWidgets import (QAbstractButton, QApplication, QComboBox, QDialog,
-    QDialogButtonBox, QLabel, QLineEdit, QSizePolicy,
-    QVBoxLayout, QWidget)
+    QDialogButtonBox, QLabel, QLineEdit, QPushButton,
+    QSizePolicy, QVBoxLayout, QWidget)
 
 class Ui_AddNodeDialog(object):
     def setupUi(self, AddNodeDialog):
@@ -56,10 +56,13 @@ class Ui_AddNodeDialog(object):
         self.cbParamType.setGeometry(QRect(260, 110, 81, 22))
         self.verticalLayoutWidget = QWidget(AddNodeDialog)
         self.verticalLayoutWidget.setObjectName(u"verticalLayoutWidget")
-        self.verticalLayoutWidget.setGeometry(QRect(50, 150, 331, 211))
+        self.verticalLayoutWidget.setGeometry(QRect(60, 150, 381, 211))
         self.verticalLayout = QVBoxLayout(self.verticalLayoutWidget)
         self.verticalLayout.setObjectName(u"verticalLayout")
         self.verticalLayout.setContentsMargins(0, 0, 0, 0)
+        self.btnAdd = QPushButton(AddNodeDialog)
+        self.btnAdd.setObjectName(u"btnAdd")
+        self.btnAdd.setGeometry(QRect(360, 110, 75, 24))
 
         self.retranslateUi(AddNodeDialog)
         self.buttonBox.accepted.connect(AddNodeDialog.accept)
@@ -73,5 +76,6 @@ class Ui_AddNodeDialog(object):
         self.label.setText(QCoreApplication.translate("AddNodeDialog", u"Node Type", None))
         self.label_2.setText(QCoreApplication.translate("AddNodeDialog", u"Node Name", None))
         self.label_3.setText(QCoreApplication.translate("AddNodeDialog", u"Params", None))
+        self.btnAdd.setText(QCoreApplication.translate("AddNodeDialog", u"Add", None))
     # retranslateUi
 
