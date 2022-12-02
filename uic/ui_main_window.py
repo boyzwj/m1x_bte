@@ -57,17 +57,17 @@ class Ui_MainWindow(object):
         self.menu.setObjectName(u"menu")
         self.menuDebug = QMenu(self.menubar)
         self.menuDebug.setObjectName(u"menuDebug")
-        self.menusettings = QMenu(self.menubar)
-        self.menusettings.setObjectName(u"menusettings")
+        self.menuSettings = QMenu(self.menubar)
+        self.menuSettings.setObjectName(u"menuSettings")
         MainWindow.setMenuBar(self.menubar)
 
         self.menubar.addAction(self.menu.menuAction())
         self.menubar.addAction(self.menuDebug.menuAction())
-        self.menubar.addAction(self.menusettings.menuAction())
+        self.menubar.addAction(self.menuSettings.menuAction())
         self.menu.addAction(self.action_open)
         self.menu.addAction(self.action_save)
         self.menuDebug.addAction(self.action_attach)
-        self.menusettings.addAction(self.action_add_node)
+        self.menuSettings.addAction(self.action_add_node)
 
         self.retranslateUi(MainWindow)
 
@@ -91,6 +91,6 @@ class Ui_MainWindow(object):
         self.action_add_node.setText(QCoreApplication.translate("MainWindow", u"add_node", None))
         self.menu.setTitle(QCoreApplication.translate("MainWindow", u"File", None))
         self.menuDebug.setTitle(QCoreApplication.translate("MainWindow", u"Debug", None))
-        self.menusettings.setTitle(QCoreApplication.translate("MainWindow", u"settings", None))
+        self.menuSettings.setTitle(QCoreApplication.translate("MainWindow", u"Settings", None))
     # retranslateUi
 

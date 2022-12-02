@@ -66,15 +66,15 @@
     </property>
     <addaction name="action_attach"/>
    </widget>
-   <widget class="QMenu" name="menusettings">
+   <widget class="QMenu" name="menuSettings">
     <property name="title">
-     <string>settings</string>
+     <string>Settings</string>
     </property>
     <addaction name="action_add_node"/>
    </widget>
    <addaction name="menu"/>
    <addaction name="menuDebug"/>
-   <addaction name="menusettings"/>
+   <addaction name="menuSettings"/>
   </widget>
   <action name="action_open">
    <property name="text">

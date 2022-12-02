@@ -17,6 +17,10 @@ class NodeTree(QTreeWidget):
         self.setup_ui()
     
     def setup_ui(self):
+        self.update_tree()
+                
+    def update_tree(self):
+        self.clear()
         head_item = QTreeWidgetItem()
         head_item.setText(0, "Nodes")
         self.setHeaderItem(head_item)
@@ -33,6 +37,5 @@ class NodeTree(QTreeWidget):
                 parent = self.node_types[node_type_name]
                 item = QTreeWidgetItem(parent)
                 item.setText(0, node_name)
-                
         
         

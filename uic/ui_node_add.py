@@ -16,8 +16,9 @@ from PySide6.QtGui import (QBrush, QColor, QConicalGradient, QCursor,
     QImage, QKeySequence, QLinearGradient, QPainter,
     QPalette, QPixmap, QRadialGradient, QTransform)
 from PySide6.QtWidgets import (QAbstractButton, QApplication, QComboBox, QDialog,
-    QDialogButtonBox, QLabel, QLineEdit, QPushButton,
-    QSizePolicy, QVBoxLayout, QWidget)
+    QDialogButtonBox, QHeaderView, QLabel, QLineEdit,
+    QPushButton, QSizePolicy, QTableWidget, QTableWidgetItem,
+    QVBoxLayout, QWidget)
 
 class Ui_AddNodeDialog(object):
     def setupUi(self, AddNodeDialog):
@@ -44,6 +45,9 @@ class Ui_AddNodeDialog(object):
         self.iptNodeName = QLineEdit(AddNodeDialog)
         self.iptNodeName.setObjectName(u"iptNodeName")
         self.iptNodeName.setGeometry(QRect(130, 70, 113, 21))
+        self.iptNodeName.setAutoFillBackground(True)
+        self.iptNodeName.setLocale(QLocale(QLocale.Chinese, QLocale.China))
+        self.iptNodeName.setInputMethodHints(Qt.ImhNone)
         self.label_3 = QLabel(AddNodeDialog)
         self.label_3.setObjectName(u"label_3")
         self.label_3.setGeometry(QRect(30, 110, 71, 21))
@@ -60,6 +64,11 @@ class Ui_AddNodeDialog(object):
         self.verticalLayout = QVBoxLayout(self.verticalLayoutWidget)
         self.verticalLayout.setObjectName(u"verticalLayout")
         self.verticalLayout.setContentsMargins(0, 0, 0, 0)
+        self.tableWidget = QTableWidget(self.verticalLayoutWidget)
+        self.tableWidget.setObjectName(u"tableWidget")
+
+        self.verticalLayout.addWidget(self.tableWidget)
+
         self.btnAdd = QPushButton(AddNodeDialog)
         self.btnAdd.setObjectName(u"btnAdd")
         self.btnAdd.setGeometry(QRect(360, 110, 75, 24))

@@ -53,6 +53,7 @@ class MainWindow(QMainWindow):
     def action_add_node(self):
         dialog = AddNodeDialog()
         dialog.exec_()
+        self.node_tree.update_tree()
         
     def action_attach(self):
         print("do action attach")
