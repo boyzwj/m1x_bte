@@ -12,9 +12,12 @@ def init():
 
 
 def save_file(nodes,file_name):
-    data = {}
-    for k,v in nodes.items():       
-        data[k] = {"name": v.name, "x": v.x(), "y": v.y(), "children": v.child_GUIDS, "parent": v.parent_GUID,"params": v.params}
+    data = []
+    for k,v in nodes.items():
+        # paramStr = json.dumps(v.params)
+        data.append({"guid": k ,"name": v.name, "x": v.x(), "y": v.y(), "children": v.child_GUIDS, "parent": v.parent_GUID
+                    #  ,"paramStr": paramStr
+                     ,"param_values": v.params})
     bin = json.dumps(data)
     with open(file_name,'w') as f:
         f.write(bin)

@@ -21,7 +21,7 @@ class Config():
                 "RandomSelector": {"type": "Composite","params": {}},
                 "Invert": {"type": "Decorator","params": {}},
                 "HpGreater": {"type": "Condition","params": {"value1":"int" , "value2":"int"}},
-                "Print": {"type": "Action","params": {"concent":"string"}},
+                "Print": {"type": "Action","params": {"content":"string"}},
              }
     }
 

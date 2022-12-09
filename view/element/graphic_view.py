@@ -57,18 +57,21 @@ class GraphicView(QGraphicsView):
             return
         self.clear_workspace()
         self.file_name = file_name
-        for guid, v in data.items():
+        for v in data:
+            guid = v['guid']
             name = v['name']
             x = v['x']
             y = v['y']
             child_GUIDS = v['children']
             parent = v['parent']
-            params = v['params']
+            # paramStr = v['paramStr']
+            # params = json.loads(paramStr)
+            params = v['param_values']
             node = QNode(node_name = name,guid = guid,params= params)
             node.child_GUIDS =  child_GUIDS
             node.parent_GUID = parent
             self.add_node(node,QPointF(x,y))
-        for guid,v in self.nodes.items():
+        for guid, v in self.nodes.items():
             for c_guid in v.child_GUIDS:
                 self.add_link(v,self.nodes[c_guid])
            
