@@ -20,6 +20,7 @@ class MainWindow(QMainWindow):
 
     def init_ui(self):
         self.node_tree = NodeTree(self.ui.centralwidget)
+        self.node_tree.itemDoubleClicked.connect(self.tree_item_doubleClicked)
         self.ui.horizontalLayout.addWidget(self.node_tree)
         self.graphicsView = GraphicView(self.ui.centralwidget)
         self.graphicsView.setObjectName(u"graphicsView")
@@ -29,6 +30,15 @@ class MainWindow(QMainWindow):
         self.ui.action_attach.triggered.connect(self.action_attach)
         self.ui.action_add_node.triggered.connect(self.action_add_node)
         
+    @Slot()
+    def tree_item_doubleClicked(self,e: QTreeWidgetItem):
+        node_name = e.text(0)
+        if node_name in g.config.data['nodes'].keys():
+            dialog = AddNodeDialog(node_name)
+            result = dialog.exec_()
+            if result == 1:
+                self.node_tree.update_tree()
+
     
     @Slot()
     def action_open(self):
@@ -54,8 +64,9 @@ class MainWindow(QMainWindow):
     @Slot()
     def action_add_node(self):
         dialog = AddNodeDialog()
-        dialog.exec_()
-        self.node_tree.update_tree()
+        result = dialog.exec_()
+        if result == 1:
+            self.node_tree.update_tree()
         
     def action_attach(self):
         print("do action attach")

@@ -72,6 +72,9 @@ class Ui_AddNodeDialog(object):
         self.btnAdd = QPushButton(AddNodeDialog)
         self.btnAdd.setObjectName(u"btnAdd")
         self.btnAdd.setGeometry(QRect(360, 110, 75, 24))
+        self.delButton = QPushButton(AddNodeDialog)
+        self.delButton.setObjectName(u"delButton")
+        self.delButton.setGeometry(QRect(310, 20, 75, 24))
 
         self.retranslateUi(AddNodeDialog)
         self.buttonBox.accepted.connect(AddNodeDialog.accept)
@@ -86,5 +89,6 @@ class Ui_AddNodeDialog(object):
         self.label_2.setText(QCoreApplication.translate("AddNodeDialog", u"Node Name", None))
         self.label_3.setText(QCoreApplication.translate("AddNodeDialog", u"Params", None))
         self.btnAdd.setText(QCoreApplication.translate("AddNodeDialog", u"Add", None))
+        self.delButton.setText(QCoreApplication.translate("AddNodeDialog", u"\u5220\u9664", None))
     # retranslateUi
 

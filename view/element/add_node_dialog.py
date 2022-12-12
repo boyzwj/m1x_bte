@@ -7,22 +7,45 @@ import json
 
 
 class AddNodeDialog(QDialog):
-    def __init__(self):
+    def __init__(self,node_name=""):
         super(AddNodeDialog, self).__init__()
         self.ui = Ui_AddNodeDialog()
         self.ui.setupUi(self)
         self.setWindowFlags(Qt.WindowStaysOnTopHint)
         self.setFixedSize(self.width(), self.height())
-        self.params = {}
+        self.node_name = node_name
         self.initUI()
 
     def initUI(self):
+        data = g.config.data['nodes'].get(self.node_name)
+        if data is not None and data:
+            self.params = data.get('params',{})
+            self.node_type = data.get('type')
+            self.setWindowTitle("Edit Node")
+            if data['type'] in ['Action','Condition']:
+                self.ui.delButton.clicked.connect(self.do_delete)
+            else:
+                self.ui.delButton.hide()
+        else:
+            self.ui.delButton.hide()
+            self.params = {}
+            self.node_type = "Action"
+        
+        self.ui.iptNodeName.setText(self.node_name)
+        self.ui.cbNodeType.setCurrentText(self.node_type)
         self.ui.cbNodeType.addItems(["Action","Condition"])
         self.ui.cbParamType.addItems(["int","float","string"])
         self.ui.iptNodeName.setAttribute(Qt.WA_InputMethodEnabled, False)
         self.ui.iptParamName.setAttribute(Qt.WA_InputMethodEnabled, False)
         self.ui.btnAdd.clicked.connect(self.add_param)
+        self.update_table()
 
+    
+    def do_delete(self):
+        if g.config.data['nodes'][self.node_name]['type'] in ['Action','Condition']:
+            del g.config.data['nodes'][self.node_name]
+            g.config.save()
+            return super().accept()            
         
     def delete_item(self,event):
         current_row = self.ui.tableWidget.currentRow()
@@ -39,7 +62,7 @@ class AddNodeDialog(QDialog):
             k = self.ui.tableWidget.itemAt(current_row,0).text()
             self.ui.tableWidget.removeRow(current_row)
             del self.params[k]
-     
+            return super().accept()
             
     def update_table(self):
         self.ui.tableWidget.clear()
@@ -76,6 +99,10 @@ class AddNodeDialog(QDialog):
             box = QMessageBox()
             box.critical(self,"Error","Empty Node Name !")
             return
+        if node_name in g.config.data['node_type'].keys():
+            box = QMessageBox()
+            box.critical(self,"Error","Node Name can not same to the node type !")
+            return
         if g.config.data['nodes'].get(node_name) is not None:
             box = QMessageBox()
             box.critical(self,"Error","Existed Node Name !")
@@ -83,6 +110,7 @@ class AddNodeDialog(QDialog):
         node_type = self.ui.cbNodeType.currentText().strip()
         data = {"type": node_type, "params": self.params}
         g.config.data['nodes'][node_name] = data
+        g.config.save()
         return super().accept()
 
     def reject(self) -> None:

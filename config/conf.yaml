@@ -1,0 +1,35 @@
+last_project: D:/project/project/Assets/ConfigAsset/ShareJsonConfig/1.json
+node_type:
+  Action: {}
+  Composite: {}
+  Condition: {}
+  Decorator: {}
+  Root: {}
+nodes:
+  HpGreater:
+    params:
+      value1: int
+      value2: int
+    type: Condition
+  Invert:
+    params: {}
+    type: Decorator
+  Print:
+    params:
+      content: string
+    type: Action
+  RandomSelector:
+    params: {}
+    type: Composite
+  RandomSequence:
+    params: {}
+    type: Composite
+  Root:
+    params: {}
+    type: Root
+  Selector:
+    params: {}
+    type: Composite
+  Sequence:
+    params: {}
+    type: Composite
