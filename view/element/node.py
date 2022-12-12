@@ -24,7 +24,7 @@ class QNode(QGraphicsItem):
         self.__head_range = 10
         self.child_GUIDS = []
         self.parent_GUID = ""
-        self.data =  g.config.nodes[self.name]["params"]
+        self.data =  g.config.data['nodes'][self.name]["params"]
         self.params = {}
         for k,tp in self.data.items():
             saved_value = params.get(k)
@@ -42,7 +42,7 @@ class QNode(QGraphicsItem):
             self.GUID = guid
         else:
             self.GUID = str(uuid.uuid4())
-        cfg_data = g.config.nodes.get(self.name)
+        cfg_data = g.config.data['nodes'].get(self.name)
         if cfg_data is None:
             self.node_type = "Action"
         else:

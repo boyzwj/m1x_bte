@@ -24,16 +24,16 @@ class NodeTree(QTreeWidget):
         head_item = QTreeWidgetItem()
         head_item.setText(0, "Nodes")
         self.setHeaderItem(head_item)
-        for node_type in g.config.node_type.keys():
+        for node_type in g.config.data['node_type'].keys():
             if node_type != "Root":
                 item = QTreeWidgetItem()
                 item.setText(0, node_type)
                 self.addTopLevelItem(item)
                 self.node_types[node_type] =  item
                 
-        for node_name in g.config.nodes.keys():
+        for node_name in g.config.data['nodes'].keys():
             if node_name != "Root":
-                node_type_name = g.config.nodes[node_name]["type"]
+                node_type_name = g.config.data['nodes'][node_name]["type"]
                 parent = self.node_types[node_type_name]
                 item = QTreeWidgetItem(parent)
                 item.setText(0, node_name)

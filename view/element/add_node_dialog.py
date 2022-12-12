@@ -76,13 +76,13 @@ class AddNodeDialog(QDialog):
             box = QMessageBox()
             box.critical(self,"Error","Empty Node Name !")
             return
-        if g.config.nodes.get(node_name) is not None:
+        if g.config.data['nodes'].get(node_name) is not None:
             box = QMessageBox()
             box.critical(self,"Error","Existed Node Name !")
             return
         node_type = self.ui.cbNodeType.currentText().strip()
         data = {"type": node_type, "params": self.params}
-        g.config.nodes[node_name] = data
+        g.config.data['nodes'][node_name] = data
         return super().accept()
 
     def reject(self) -> None:

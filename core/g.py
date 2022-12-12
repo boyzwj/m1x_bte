@@ -8,8 +8,11 @@ need_save = False
 def init():
     global config
     config = Config()
-    config.load("config/conf.yaml")
+    config.load()
 
+def save_config():
+    # global config    
+    config.save()
 
 def save_file(nodes,file_name):
     data = []

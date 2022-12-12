@@ -33,7 +33,8 @@ class MainWindow(QMainWindow):
     @Slot()
     def action_open(self):
         dialog = QFileDialog()
-        filename,_ext = dialog.getOpenFileName(self,"Open file","work_data","json(*.json)")
+        last_path = g.config.data['last_project']
+        filename,_ext = dialog.getOpenFileName(self,"Open file",last_path,"json(*.json)")
         if filename == "":
             return
         self.graphicsView.load_file(file_name = filename)
@@ -42,7 +43,8 @@ class MainWindow(QMainWindow):
     def action_save(self):
         if self.graphicsView.file_name is None:
             dialog = QFileDialog()
-            filename,_ext = dialog.getSaveFileName(self, "Save file","work_data","json(*.json)")
+            last_path = g.config.data['last_project']
+            filename,_ext = dialog.getSaveFileName(self, "Save file",last_path,"json(*.json)")
             if filename == "":
                 return
             self.graphicsView.save_file(file_name = filename)

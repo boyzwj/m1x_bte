@@ -5,6 +5,7 @@ from view.element.node import *
 from view.element.tmp_link import *
 from view.element.link import *
 import json
+from core import g
 
 class GraphicView(QGraphicsView):
     nodes = {}
@@ -55,8 +56,10 @@ class GraphicView(QGraphicsView):
             f.close()
         if data is None:
             return
-        self.clear_workspace()
         self.file_name = file_name
+        g.config.data['last_project'] = self.file_name
+        g.save_config()
+        self.clear_workspace()
         for v in data:
             guid = v['guid']
             name = v['name']
@@ -64,8 +67,6 @@ class GraphicView(QGraphicsView):
             y = v['y']
             child_GUIDS = v['children']
             parent = v['parent']
-            # paramStr = v['paramStr']
-            # params = json.loads(paramStr)
             params = v['param_values']
             node = QNode(node_name = name,guid = guid,params= params)
             node.child_GUIDS =  child_GUIDS
@@ -137,7 +138,7 @@ class GraphicView(QGraphicsView):
             source_item = QStandardItemModel()
             source_item.dropMimeData(data, Qt.CopyAction, 0, 0, QModelIndex())
             self.adding_node_name = source_item.item(0, 0).text()
-            if self.adding_node_name in g.config.nodes.keys():
+            if self.adding_node_name in g.config.data['nodes'].keys():
                 e.acceptProposedAction()
 
 
@@ -148,7 +149,7 @@ class GraphicView(QGraphicsView):
         # return super().dragMoveEvent(e)            
             
     def dropEvent(self, e: QDropEvent) -> None:
-        if self.adding_node_name in g.config.nodes.keys() and self.adding_node_name != "Root":
+        if self.adding_node_name in g.config.data['nodes'].keys() and self.adding_node_name != "Root":
             node = QNode(node_name=self.adding_node_name)
             self.add_node(node)
             node.setPos( self.mapToScene(e.position().toPoint()))            
