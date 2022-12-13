@@ -6,6 +6,21 @@ node_type:
   Decorator: {}
   Root: {}
 nodes:
+  AimAtTargetPointAction:
+    params: {}
+    type: Action
+  ContinueFireAction:
+    params: {}
+    type: Action
+  ContinueMoveAction:
+    params: {}
+    type: Action
+  FindPathAction:
+    params: {}
+    type: Action
+  FindPatrolSpotAction:
+    params: {}
+    type: Action
   HpGreater:
     params:
       value1: int
@@ -33,3 +48,6 @@ nodes:
   Sequence:
     params: {}
     type: Composite
+  StartFireAction:
+    params: {}
+    type: Action
