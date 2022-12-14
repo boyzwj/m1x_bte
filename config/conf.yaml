@@ -9,12 +9,6 @@ nodes:
   AimAtTargetPointAction:
     params: {}
     type: Action
-  ContinueFireAction:
-    params: {}
-    type: Action
-  ContinueMoveAction:
-    params: {}
-    type: Action
   FindPathAction:
     params: {}
     type: Action
