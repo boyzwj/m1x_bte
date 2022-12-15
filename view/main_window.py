@@ -21,7 +21,6 @@ class MainWindow(QMainWindow):
 
     def init_ui(self):
         self.sideWidget = QWidget(self.ui.centralwidget)   
-        # self.sideWidget.setStyleSheet("background-color: rgb(255,100, 255)")
         vBox  = QVBoxLayout(self.sideWidget)
         self.ai_list = QComboBox(self.sideWidget)
         vBox.addWidget(self.ai_list)
@@ -31,12 +30,6 @@ class MainWindow(QMainWindow):
         
         self.ui.horizontalLayout.addWidget(self.sideWidget)
         
-        # self.ai_list = QComboBox(self.ui.centralwidget)
-        # self.ui.horizontalLayout.addWidget(self.ai_list)
-        
-        # self.node_tree = NodeTree(self.ui.centralwidget)
-        # self.ui.horizontalLayout.addWidget(self.node_tree)
-
         self.graphicsView = GraphicView(self.ui.centralwidget)
         self.graphicsView.setObjectName(u"graphicsView")
         self.ui.horizontalLayout.addWidget(self.graphicsView)
