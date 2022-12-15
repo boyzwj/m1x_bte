@@ -2,6 +2,7 @@ from uic.ui_main_window import Ui_MainWindow
 from PySide6.QtWidgets import *
 from PySide6 import QtCore, QtGui
 from PySide6.QtGui import *
+from PySide6.QtNetwork import *
 from view.element.node import *
 from view.element.tmp_link import *
 from view.element.node_tree import *
@@ -19,16 +20,63 @@ class MainWindow(QMainWindow):
         self.init_ui()
 
     def init_ui(self):
-        self.node_tree = NodeTree(self.ui.centralwidget)
-        self.node_tree.itemDoubleClicked.connect(self.tree_item_doubleClicked)
-        self.ui.horizontalLayout.addWidget(self.node_tree)
+        self.sideWidget = QWidget(self.ui.centralwidget)   
+        # self.sideWidget.setStyleSheet("background-color: rgb(255,100, 255)")
+        vBox  = QVBoxLayout(self.sideWidget)
+        self.ai_list = QComboBox(self.sideWidget)
+        vBox.addWidget(self.ai_list)
+        
+        self.node_tree = NodeTree(self.sideWidget)
+        vBox.addWidget(self.node_tree)
+        
+        self.ui.horizontalLayout.addWidget(self.sideWidget)
+        
+        # self.ai_list = QComboBox(self.ui.centralwidget)
+        # self.ui.horizontalLayout.addWidget(self.ai_list)
+        
+        # self.node_tree = NodeTree(self.ui.centralwidget)
+        # self.ui.horizontalLayout.addWidget(self.node_tree)
+
         self.graphicsView = GraphicView(self.ui.centralwidget)
         self.graphicsView.setObjectName(u"graphicsView")
         self.ui.horizontalLayout.addWidget(self.graphicsView)
+        
+        
+        self.node_tree.itemDoubleClicked.connect(self.tree_item_doubleClicked)
         self.ui.action_open.triggered.connect(self.action_open)
         self.ui.action_save.triggered.connect(self.action_save)
         self.ui.action_attach.triggered.connect(self.action_attach)
         self.ui.action_add_node.triggered.connect(self.action_add_node)
+        
+        self.udpSocket = QUdpSocket(self)
+        self.udpSocket.bind(QHostAddress("127.0.0.1"),0)
+        self.udpSocket.readyRead.connect(self.readPendingDatagrams)
+    
+        
+    def readPendingDatagrams(self):
+        while self.udpSocket.hasPendingDatagrams():
+            datagram = self.udpSocket.receiveDatagram()
+            self.processTheDatagram(datagram)
+        
+    def processTheDatagram(self, dataGram: QNetworkDatagram):
+        jsonStr = dataGram.data().toStdString()
+        data = json.loads(jsonStr)
+        cmd = data['cmd']
+        content = data['content']
+        match cmd:
+            case "get_list":
+                self.OnGetList(content)
+            case "node_states":
+                self.OnNodeStates(content)
+            case _:
+                print(f"unexpected cmd : {cmd}")
+                
+    def OnGetList(self, content):
+        data = json.loads(content)
+        print(f"on get list : {data}")
+        
+        
+        
         
     @Slot()
     def tree_item_doubleClicked(self,e: QTreeWidgetItem):
@@ -69,4 +117,14 @@ class MainWindow(QMainWindow):
             self.node_tree.update_tree()
         
     def action_attach(self):
-        print("do action attach")
+        self.send_cmd("get_list","")
+        
+    def send_cmd(self,cmd,content = ""):
+        data = {"cmd": cmd, "content": content}
+        bytesData = json.dumps(data).encode("utf-8")
+        self.udpSocket.writeDatagram(bytesData, QHostAddress("127.0.0.1"), 9091)
+        self.udpSocket.flush()
+        
+        
+        
+        
