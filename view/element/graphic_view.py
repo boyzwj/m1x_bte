@@ -356,9 +356,14 @@ class GraphicView(QGraphicsView):
         self.update_related_links(node)
         return y        
 
-
-
-
+    def update_node_states(self, infos):
+        for info in infos:
+            guid = info["guid"]
+            state = info["state"]
+            node = self.nodes.get(guid)
+            if node is not None:
+                node.set_state(state)
+                     
 
 
 

@@ -26,6 +26,7 @@ class QNode(QGraphicsItem):
         self.parent_GUID = ""
         self.data =  g.config.data['nodes'][self.name]["params"]
         self.params = {}
+        self.state = 0
         for k,tp in self.data.items():
             saved_value = params.get(k)
             if saved_value is None:
@@ -116,6 +117,20 @@ class QNode(QGraphicsItem):
             painter.setPen(QPen(Qt.black, 1.5, Qt.DotLine))
             painter.drawRect(self.boundingRect())
         painter.drawPixmap(QPointF(-self.__width / 2, -self.__height / 2), self.pixmap)
+        pen = QPen()
+        color = None
+        # ready
+        if self.state == 0: 
+            color = QColor(0, 0, 0)
+        if self.state == 1:
+            color = QColor(255, 215, 0)
+        elif self.state == 2:
+            color = QColor(34, 139, 34)
+        elif self.state == 3:
+            color = QColor(178, 34, 34)
+        pen.setColor(color)
+        painter.setPen(pen)
+        
 
     def draw_head(self, painter: QPainter):
         if self.head_position is not None:
@@ -131,6 +146,12 @@ class QNode(QGraphicsItem):
             dialog = NodeDialog(self)
             dialog.exec()
 
+    def set_state(self, state):
+        self.state = state
+        self.update()
+        
+        
+        
     # def mousePressEvent(self, event: QGraphicsSceneMouseEvent) -> None:
     #     if event.button() == Qt.MouseButton.RightButton:
     #         print("xxxxxxxxxxxx")

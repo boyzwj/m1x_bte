@@ -34,7 +34,7 @@ class MainWindow(QMainWindow):
         self.graphicsView.setObjectName(u"graphicsView")
         self.ui.horizontalLayout.addWidget(self.graphicsView)
         
-        
+        self.ai_list.currentIndexChanged.connect(self.on_combobox_changed)
         self.node_tree.itemDoubleClicked.connect(self.tree_item_doubleClicked)
         self.ui.action_open.triggered.connect(self.action_open)
         self.ui.action_save.triggered.connect(self.action_save)
@@ -67,8 +67,15 @@ class MainWindow(QMainWindow):
     def OnGetList(self, content):
         data = json.loads(content)
         print(f"on get list : {data}")
+        self.ai_list.clear()
+        for i in range(len(data)):
+            ai_id = data[i]
+            self.ai_list.addItem(str(ai_id),ai_id)
         
         
+    def OnNodeStates(self, content):
+        data = json.loads(content)
+        self.graphicsView.update_node_states(data)
         
         
     @Slot()
@@ -120,4 +127,9 @@ class MainWindow(QMainWindow):
         
         
         
+    def on_combobox_changed(self, value):
+        item = self.ai_list.itemData(value)
+        if item is not None:
+            content = json.dumps(item)
+            self.send_cmd("listen",content)       
         
