@@ -19,7 +19,7 @@ class QNode(QGraphicsItem):
     def __init__(self, parent=None, node_name="",guid: str = None,params = {}) -> None:
         super(QNode, self).__init__(parent)
         self.name = node_name
-        self.__width = 110
+        # self.__width = 160
         self.__height = 50
         self.__head_range = 10
         self.child_GUIDS = []
@@ -48,7 +48,14 @@ class QNode(QGraphicsItem):
             self.node_type = "Action"
         else:
             self.node_type = cfg_data["type"]
-        self.pixmap = QPixmap(f"assets/{self.node_type}.svg")
+                     
+        if self.node_type == "Root":
+            self.__width = 80
+        elif self.node_type  == "Composite":
+            self.__width = 150
+        else:
+            self.__width = 160            
+            
         if self.node_type in ["Composite", "Decorator", "Condition", "Action"]:
             self.head_position = QPointF(-self.__width / 2 + self.__head_range, 0)
         else:
@@ -58,7 +65,7 @@ class QNode(QGraphicsItem):
             self.tail_position = QPointF(self.__width / 2 - self.__head_range, 0)
         else:
             self.tail_position = None
-
+    
         self.setFlag(QGraphicsItem.GraphicsItemFlag.ItemIsSelectable |
                      QGraphicsItem.GraphicsItemFlag.ItemIsMovable)
 
@@ -80,10 +87,6 @@ class QNode(QGraphicsItem):
 
     def link_end_pos(self) -> QPointF:
         return self.scenePos() + QPointF(-self.__width / 2, 0)
-
-    # def itemChange(self, change, value):
-    #     print(change)
-    #     return value
 
     def boundingRect(self) -> QRectF:
         x1 = -self.__width / 2
@@ -112,11 +115,64 @@ class QNode(QGraphicsItem):
         self.draw_tail(painter)
         self.do_fill_bg(painter)
 
+
     def do_fill_bg(self, painter):
         if self.isSelected():
-            painter.setPen(QPen(Qt.black, 1.5, Qt.DotLine))
+            painter.setPen(QPen(Qt.black, 1, Qt.DotLine))
             painter.drawRect(self.boundingRect())
-        painter.drawPixmap(QPointF(-self.__width / 2, -self.__height / 2), self.pixmap)
+        
+        
+        bg_color = None
+        if self.node_type == "Root":
+            bg_color = QColor(247,143,191)
+        elif self.node_type == "Composite":
+            bg_color = QColor(168,229,148)
+        elif self.node_type == "Decorator":
+            bg_color = QColor(172,78,197)
+        elif self.node_type == "Condition":
+            bg_color = QColor(154,220,245)
+        elif self.node_type == "Action":
+            bg_color = QColor(255,255,255)
+        painter.setPen(QPen(Qt.black, 1, Qt.SolidLine))
+        painter.setBrush(QBrush(bg_color))
+        
+        
+        if self.node_type == "Root":
+            painter.drawEllipse(QPointF(0,0),self.__width/2 - self.__head_range,25)
+        elif self.node_type == "Composite":
+            points = QPolygonF([
+                QPointF(-self.__width/2 + self.__head_range,0),
+                QPointF(-self.__width/4, self.__height/2),
+                QPointF(self.__width/4, self.__height/2),
+                QPointF(self.__width/2 - self.__head_range,0),
+                QPointF(self.__width/4, -self.__height/2),
+                QPointF(-self.__width/4, -self.__height/2),
+            ])
+            painter.drawPolygon(points)            
+        elif self.node_type == "Decorator":
+            points = QPolygonF([
+                QPointF(-self.__width/2 + self.__head_range,0),
+                QPointF(0, self.__height/2),
+                QPointF(self.__width/2 - self.__head_range,0),
+                QPointF(0, -self.__height/2)
+            ])
+            painter.drawPolygon(points)
+        elif self.node_type == "Condition":
+            points = QPolygonF([
+                QPointF(-self.__width/2 + self.__head_range,0),
+                QPointF(-self.__width/4, self.__height/2),
+                QPointF(self.__width/2, self.__height/2),
+                QPointF(self.__width/2 ,-self.__height/2),
+                QPointF(-self.__width/4, -self.__height/2),
+
+            ])
+            painter.drawPolygon(points)
+        elif self.node_type == "Action":
+            rect = QRectF(-self.__width/2 + self.__head_range,-self.__height/2, self.__width - self.__head_range,self.__height)
+            painter.drawRoundedRect(rect,10,10)
+        else:
+            rect = QRectF(-self.__width/2 + self.__head_range,-self.__height/2, self.__width - self.__head_range,self.__height)
+            painter.drawRect(rect)
         pen = QPen()
         color = None
         # ready
@@ -149,22 +205,3 @@ class QNode(QGraphicsItem):
     def set_state(self, state):
         self.state = state
         self.update()
-        
-        
-        
-    # def mousePressEvent(self, event: QGraphicsSceneMouseEvent) -> None:
-    #     if event.button() == Qt.MouseButton.RightButton:
-    #         print("xxxxxxxxxxxx")
-    #         self.startPos = event.pos()
-    #
-    #     return super().mousePressEvent(event)
-    #
-    # def mouseMoveEvent(self, event):
-    #     if self.startPos is not None:
-    #         delta = self.startPos - event.pos()
-    #         print(delta)
-    #
-    # def mouseReleaseEvent(self, event):
-    #     self.startPos = None
-    #     print("end mouse")
-    #     super(Node, self).mouseReleaseEvent(event)
