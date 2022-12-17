@@ -19,7 +19,6 @@ class QNode(QGraphicsItem):
     def __init__(self, parent=None, node_name="",guid: str = None,params = {}) -> None:
         super(QNode, self).__init__(parent)
         self.name = node_name
-        # self.__width = 160
         self.__height = 50
         self.__head_range = 10
         self.child_GUIDS = []
@@ -60,7 +59,7 @@ class QNode(QGraphicsItem):
             self.head_position = QPointF(-self.__width / 2 + self.__head_range, 0)
         else:
             self.head_position = None
-
+            
         if self.node_type in ["Root", "Decorator", "Composite"]:
             self.tail_position = QPointF(self.__width / 2 - self.__head_range, 0)
         else:
@@ -119,9 +118,7 @@ class QNode(QGraphicsItem):
     def do_fill_bg(self, painter):
         if self.isSelected():
             painter.setPen(QPen(Qt.black, 1, Qt.DotLine))
-            painter.drawRect(self.boundingRect())
-        
-        
+            painter.drawRect(self.boundingRect())  
         bg_color = None
         if self.node_type == "Root":
             bg_color = QColor(247,143,191)
@@ -154,7 +151,7 @@ class QNode(QGraphicsItem):
                 QPointF(-self.__width/2 + self.__head_range,0),
                 QPointF(0, self.__height/2),
                 QPointF(self.__width/2 - self.__head_range,0),
-                QPointF(0, -self.__height/2)
+                QPointF(0, -self.__height/2),
             ])
             painter.drawPolygon(points)
         elif self.node_type == "Condition":
@@ -164,7 +161,6 @@ class QNode(QGraphicsItem):
                 QPointF(self.__width/2, self.__height/2),
                 QPointF(self.__width/2 ,-self.__height/2),
                 QPointF(-self.__width/4, -self.__height/2),
-
             ])
             painter.drawPolygon(points)
         elif self.node_type == "Action":
