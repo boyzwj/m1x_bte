@@ -25,18 +25,18 @@ class  NodeDialog(QDialog):
                 intValidator = QIntValidator(self)
                 ipt.setValidator(intValidator)
                 if name in self.node.params.keys():
-                    ipt.setText(str(self.node.params[name]))
+                    ipt.setText(self.node.params[name])
                 else:
-                    self.node.params[name] = 0
+                    self.node.params[name] = "0"
                     ipt.setText("0")
             elif tp == "float":
                 ipt = QLineEdit(self)
                 floatValidator = QDoubleValidator(self)
                 ipt.setValidator(floatValidator)
                 if name in self.node.params.keys():
-                    ipt.setText(str(self.node.params[name]))
+                  ipt.setText(self.node.params[name])
                 else:
-                    self.node.params[name] = 0
+                    self.node.params[name] = "0"
                     ipt.setText("0")
             elif tp == "string":
                 ipt = QLineEdit(self)
@@ -50,12 +50,12 @@ class  NodeDialog(QDialog):
     
     def accept(self) -> None:
         for k,ipt in self.forms.items():
-            if self.node.data[k] == "int":
-                self.node.params[k] = int(ipt.text())
-            elif self.node.data[k] == "float":
-                self.node.params[k] = float(ipt.text())
-            else:
-                self.node.params[k] = ipt.text()
+            # if self.node.data[k] == "int":
+            #     self.node.params[k] = int(ipt.text())
+            # elif self.node.data[k] == "float":
+            #     self.node.params[k] = float(ipt.text())
+            # else:
+            self.node.params[k] = ipt.text()
         g.need_save = True
         return super().accept()
     

@@ -30,9 +30,9 @@ class QNode(QGraphicsItem):
             saved_value = params.get(k)
             if saved_value is None:
                 if tp == "int":
-                    saved_value = 0
+                    saved_value = "0"
                 elif tp == "float":
-                    saved_value = 0
+                    saved_value = "0"
                 elif tp == "string":
                     saved_value = ""
             self.params[k] = saved_value

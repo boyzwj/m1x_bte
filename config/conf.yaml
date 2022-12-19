@@ -20,12 +20,15 @@ nodes:
       value1: int
       value2: int
     type: Condition
+  Idle:
+    params:
+      delay: float
+    type: Action
   Invert:
     params: {}
     type: Decorator
-  Print:
-    params:
-      content: string
+  PurchaseMainWeapon:
+    params: {}
     type: Action
   RandomSelector:
     params: {}
@@ -43,6 +46,9 @@ nodes:
     params: {}
     type: Composite
   StartFire:
+    params: {}
+    type: Action
+  SwitchWeapon:
     params: {}
     type: Action
   TurnAroundToTarget:

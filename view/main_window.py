@@ -44,6 +44,8 @@ class MainWindow(QMainWindow):
         self.udpSocket = QUdpSocket(self)
         self.udpSocket.bind(QHostAddress("127.0.0.1"),0)
         self.udpSocket.readyRead.connect(self.readPendingDatagrams)
+        self.timer_id = self.startTimer(3000, timerType=Qt.VeryCoarseTimer)
+        self.debugID = None
     
         
     def readPendingDatagrams(self):
@@ -76,6 +78,11 @@ class MainWindow(QMainWindow):
     def OnNodeStates(self, content):
         data = json.loads(content)
         self.graphicsView.update_node_states(data)
+        
+    def timerEvent(self, event):
+        if self.debugID is not None:
+            content = json.dumps(self.debugID)
+            self.send_cmd("listen",content)       
         
         
     @Slot()
@@ -130,6 +137,5 @@ class MainWindow(QMainWindow):
     def on_combobox_changed(self, value):
         item = self.ai_list.itemData(value)
         if item is not None:
-            content = json.dumps(item)
-            self.send_cmd("listen",content)       
+            self.debugID = item
         
