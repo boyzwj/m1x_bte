@@ -20,6 +20,13 @@ class MainWindow(QMainWindow):
         self.init_ui()
 
     def init_ui(self):
+        debug_action = QAction("Debug",self)
+        debug_action.setStatusTip("Debug project")  
+        debug_action.triggered.connect(self.OnDebugClicked)
+        debug_action.setCheckable(True)
+        
+        self.ui.toolBar.addAction(debug_action)
+            
         self.sideWidget = QWidget(self.ui.centralwidget)   
         vBox  = QVBoxLayout(self.sideWidget)
         self.ai_list = QComboBox(self.sideWidget)
@@ -38,23 +45,33 @@ class MainWindow(QMainWindow):
         self.node_tree.itemDoubleClicked.connect(self.tree_item_doubleClicked)
         self.ui.action_open.triggered.connect(self.action_open)
         self.ui.action_save.triggered.connect(self.action_save)
-        self.ui.action_attach.triggered.connect(self.action_attach)
         self.ui.action_add_node.triggered.connect(self.action_add_node)
         
         self.udpSocket = QUdpSocket(self)
         self.udpSocket.bind(QHostAddress("127.0.0.1"),0)
-        self.udpSocket.readyRead.connect(self.readPendingDatagrams)
+        self.udpSocket.readyRead.connect(self.readPendingDataGrams)
         self.timer_id = self.startTimer(3000, timerType=Qt.VeryCoarseTimer)
         self.debugID = None
+        self.is_debug = False
     
+    
+    def OnDebugClicked(self,s):
+        self.is_debug = s
+        if self.is_debug:
+            self.send_cmd("get_list","")
+        else:
+            self.debugID = None
+            self.ai_list.clear()
         
-    def readPendingDatagrams(self):
+    def readPendingDataGrams(self):
         while self.udpSocket.hasPendingDatagrams():
-            datagram = self.udpSocket.receiveDatagram()
-            self.processTheDatagram(datagram)
+            dataGram = self.udpSocket.receiveDatagram()
+            self.processTheDataGram(dataGram)
         
-    def processTheDatagram(self, dataGram: QNetworkDatagram):
+    def processTheDataGram(self, dataGram: QNetworkDatagram):
         jsonStr = dataGram.data().toStdString()
+        if jsonStr == "":
+            return
         data = json.loads(jsonStr)
         cmd = data['cmd']
         content = data['content']
@@ -63,6 +80,8 @@ class MainWindow(QMainWindow):
                 self.OnGetList(content)
             case "node_states":
                 self.OnNodeStates(content)
+            case "remote_nodes":
+                self.OnRemoteNodes(content)
             case _:
                 print(f"unexpected cmd : {cmd}")
                 
@@ -78,11 +97,14 @@ class MainWindow(QMainWindow):
     def OnNodeStates(self, content):
         data = json.loads(content)
         self.graphicsView.update_node_states(data)
-        
+
+    def OnRemoteNodes(self, content):
+        data = json.loads(content)
+        pass
+    
     def timerEvent(self, event):
-        if self.debugID is not None:
-            content = json.dumps(self.debugID)
-            self.send_cmd("listen",content)       
+        if self.is_debug:
+            self.send_cmd("heart")       
         
         
     @Slot()
@@ -99,7 +121,7 @@ class MainWindow(QMainWindow):
     def action_open(self):
         dialog = QFileDialog()
         last_path = g.config.data['last_project']
-        filename,_ext = dialog.getOpenFileName(self,"Open file",last_path,"json(*.json)")
+        filename, _ext = dialog.getOpenFileName(self,"Open file",last_path,"json(*.json)")
         if filename == "":
             return
         self.graphicsView.load_file(file_name = filename)
@@ -123,8 +145,6 @@ class MainWindow(QMainWindow):
         if result == 1:
             self.node_tree.update_tree()
         
-    def action_attach(self):
-        self.send_cmd("get_list","")
         
     def send_cmd(self,cmd,content = ""):
         data = {"cmd": cmd, "content": content}
@@ -138,4 +158,7 @@ class MainWindow(QMainWindow):
         item = self.ai_list.itemData(value)
         if item is not None:
             self.debugID = item
+            self.send_cmd("listen",str(item))
+        else:
+            self.debugID = None
         

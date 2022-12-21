@@ -17,13 +17,14 @@ from PySide6.QtGui import (QAction, QBrush, QColor, QConicalGradient,
     QPainter, QPalette, QPixmap, QRadialGradient,
     QTransform)
 from PySide6.QtWidgets import (QApplication, QHBoxLayout, QMainWindow, QMenu,
-    QMenuBar, QSizePolicy, QStatusBar, QWidget)
+    QMenuBar, QSizePolicy, QStatusBar, QToolBar,
+    QWidget)
 
 class Ui_MainWindow(object):
     def setupUi(self, MainWindow):
         if not MainWindow.objectName():
             MainWindow.setObjectName(u"MainWindow")
-        MainWindow.resize(1020, 707)
+        MainWindow.resize(1020, 719)
         sizePolicy = QSizePolicy(QSizePolicy.Expanding, QSizePolicy.Expanding)
         sizePolicy.setHorizontalStretch(0)
         sizePolicy.setVerticalStretch(0)
@@ -55,18 +56,17 @@ class Ui_MainWindow(object):
         self.menubar.setGeometry(QRect(0, 0, 1020, 22))
         self.menu = QMenu(self.menubar)
         self.menu.setObjectName(u"menu")
-        self.menuDebug = QMenu(self.menubar)
-        self.menuDebug.setObjectName(u"menuDebug")
         self.menuSettings = QMenu(self.menubar)
         self.menuSettings.setObjectName(u"menuSettings")
         MainWindow.setMenuBar(self.menubar)
+        self.toolBar = QToolBar(MainWindow)
+        self.toolBar.setObjectName(u"toolBar")
+        MainWindow.addToolBar(Qt.TopToolBarArea, self.toolBar)
 
         self.menubar.addAction(self.menu.menuAction())
-        self.menubar.addAction(self.menuDebug.menuAction())
         self.menubar.addAction(self.menuSettings.menuAction())
         self.menu.addAction(self.action_open)
         self.menu.addAction(self.action_save)
-        self.menuDebug.addAction(self.action_attach)
         self.menuSettings.addAction(self.action_add_node)
 
         self.retranslateUi(MainWindow)
@@ -90,7 +90,7 @@ class Ui_MainWindow(object):
 #endif // QT_CONFIG(shortcut)
         self.action_add_node.setText(QCoreApplication.translate("MainWindow", u"add_node", None))
         self.menu.setTitle(QCoreApplication.translate("MainWindow", u"File", None))
-        self.menuDebug.setTitle(QCoreApplication.translate("MainWindow", u"Debug", None))
         self.menuSettings.setTitle(QCoreApplication.translate("MainWindow", u"Settings", None))
+        self.toolBar.setWindowTitle(QCoreApplication.translate("MainWindow", u"toolBar", None))
     # retranslateUi
 

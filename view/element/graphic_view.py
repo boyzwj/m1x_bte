@@ -59,6 +59,11 @@ class GraphicView(QGraphicsView):
         self.file_name = file_name
         g.config.data['last_project'] = self.file_name
         g.save_config()
+        self.load_from_data(data)
+
+           
+            
+    def load_from_data(self, data):
         self.clear_workspace()
         for v in data:
             guid = v['guid']
@@ -75,9 +80,7 @@ class GraphicView(QGraphicsView):
         for guid, v in self.nodes.items():
             for c_guid in v.child_GUIDS:
                 self.add_link(v,self.nodes[c_guid])
-           
-            
-            
+                
             
     
     

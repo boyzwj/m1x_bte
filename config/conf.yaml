@@ -7,22 +7,22 @@ node_type:
   Root: {}
 nodes:
   AimAtTargetPoint:
+    des: "\u5411\u76EE\u6807\u7784\u51C6"
     params: {}
     type: Action
   FindPath:
+    des: "\u5BFB\u8DEF"
     params: {}
     type: Action
   FindPatrolSpot:
     params: {}
     type: Action
-  HpGreater:
-    params:
-      value1: int
-      value2: int
-    type: Condition
   Idle:
+    des: "\u53D1\u5446"
     params:
-      delay: float
+      delay:
+        des: "\u79D2"
+        type: float
     type: Action
   Invert:
     params: {}
@@ -46,6 +46,7 @@ nodes:
     params: {}
     type: Composite
   StartFire:
+    des: "\u5F00\u67AA"
     params: {}
     type: Action
   SwitchWeapon:

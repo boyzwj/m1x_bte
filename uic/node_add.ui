@@ -6,8 +6,8 @@
    <rect>
     <x>0</x>
     <y>0</y>
-    <width>522</width>
-    <height>392</height>
+    <width>633</width>
+    <height>405</height>
    </rect>
   </property>
   <property name="windowTitle">
@@ -16,7 +16,7 @@
   <widget class="QDialogButtonBox" name="buttonBox">
    <property name="geometry">
     <rect>
-     <x>400</x>
+     <x>540</x>
      <y>20</y>
      <width>81</width>
      <height>241</height>
@@ -96,7 +96,7 @@
   <widget class="QLabel" name="label_3">
    <property name="geometry">
     <rect>
-     <x>30</x>
+     <x>40</x>
      <y>110</y>
      <width>71</width>
      <height>21</height>
@@ -134,8 +134,8 @@
     <rect>
      <x>60</x>
      <y>150</y>
-     <width>381</width>
-     <height>211</height>
+     <width>501</width>
+     <height>231</height>
     </rect>
    </property>
    <layout class="QVBoxLayout" name="verticalLayout">
@@ -147,7 +147,7 @@
   <widget class="QPushButton" name="btnAdd">
    <property name="geometry">
     <rect>
-     <x>360</x>
+     <x>490</x>
      <y>110</y>
      <width>75</width>
      <height>24</height>
@@ -160,7 +160,7 @@
   <widget class="QPushButton" name="delButton">
    <property name="geometry">
     <rect>
-     <x>310</x>
+     <x>440</x>
      <y>20</y>
      <width>75</width>
      <height>24</height>
@@ -168,6 +168,45 @@
    </property>
    <property name="text">
     <string>删除</string>
+   </property>
+  </widget>
+  <widget class="QLineEdit" name="iptParamDes">
+   <property name="geometry">
+    <rect>
+     <x>360</x>
+     <y>110</y>
+     <width>113</width>
+     <height>21</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QLineEdit" name="iptNodeDes">
+   <property name="geometry">
+    <rect>
+     <x>340</x>
+     <y>70</y>
+     <width>113</width>
+     <height>21</height>
+    </rect>
+   </property>
+  </widget>
+  <widget class="QLabel" name="label_4">
+   <property name="geometry">
+    <rect>
+     <x>260</x>
+     <y>70</y>
+     <width>71</width>
+     <height>16</height>
+    </rect>
+   </property>
+   <property name="layoutDirection">
+    <enum>Qt::LeftToRight</enum>
+   </property>
+   <property name="text">
+    <string>Node Des</string>
+   </property>
+   <property name="alignment">
+    <set>Qt::AlignRight|Qt::AlignTrailing|Qt::AlignVCenter</set>
    </property>
   </widget>
  </widget>
