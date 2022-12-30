@@ -19,7 +19,9 @@ class  NodeDialog(QDialog):
         self.initUI(node)
         
     def initUI(self,node):
-        for name, tp in node.data.items():
+        for name, attr in node.data.items():
+            tp = attr['type']
+            des = attr['des']
             if tp == "int":
                 ipt = QLineEdit(self)
                 intValidator = QIntValidator(self)
@@ -46,15 +48,10 @@ class  NodeDialog(QDialog):
                     self.node.params[name] = ""
                     ipt.setText("")
             self.forms[name] = ipt
-            self.ui.formLayout.addRow(name,ipt)
+            self.ui.formLayout.addRow(f"{name}@{des}",ipt)
     
     def accept(self) -> None:
         for k,ipt in self.forms.items():
-            # if self.node.data[k] == "int":
-            #     self.node.params[k] = int(ipt.text())
-            # elif self.node.data[k] == "float":
-            #     self.node.params[k] = float(ipt.text())
-            # else:
             self.node.params[k] = ipt.text()
         g.need_save = True
         return super().accept()

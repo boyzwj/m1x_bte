@@ -25,7 +25,13 @@ class MainWindow(QMainWindow):
         debug_action.triggered.connect(self.OnDebugClicked)
         debug_action.setCheckable(True)
         
+        sync_action = QAction("Sync",self)
+        sync_action.setStatusTip("Sync project")
+        sync_action.triggered.connect(self.OnSyncClicked)
+        sync_action.setCheckable(False)
+        
         self.ui.toolBar.addAction(debug_action)
+        self.ui.toolBar.addAction(sync_action)
             
         self.sideWidget = QWidget(self.ui.centralwidget)   
         vBox  = QVBoxLayout(self.sideWidget)
@@ -63,6 +69,9 @@ class MainWindow(QMainWindow):
             self.debugID = None
             self.ai_list.clear()
         
+    def OnSyncClicked(self,s):
+        print(s)
+        
     def readPendingDataGrams(self):
         while self.udpSocket.hasPendingDatagrams():
             dataGram = self.udpSocket.receiveDatagram()
@@ -80,8 +89,8 @@ class MainWindow(QMainWindow):
                 self.OnGetList(content)
             case "node_states":
                 self.OnNodeStates(content)
-            case "remote_nodes":
-                self.OnRemoteNodes(content)
+            case "remote_tree_info":
+                self.OnRemoteTreeInfo(content)
             case _:
                 print(f"unexpected cmd : {cmd}")
                 
@@ -98,9 +107,9 @@ class MainWindow(QMainWindow):
         data = json.loads(content)
         self.graphicsView.update_node_states(data)
 
-    def OnRemoteNodes(self, content):
+    def OnRemoteTreeInfo(self, content):
         data = json.loads(content)
-        pass
+        self.graphicsView.load_from_data(data['nodes'])
     
     def timerEvent(self, event):
         if self.is_debug:
