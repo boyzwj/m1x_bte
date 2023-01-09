@@ -70,7 +70,13 @@ class MainWindow(QMainWindow):
             self.ai_list.clear()
         
     def OnSyncClicked(self,s):
-        print(s)
+        nodes = self.graphicsView.nodes
+        data = []
+        for k,v in nodes.items():
+            data.append({"guid": k ,"name": v.name, "x": v.x(), "y": v.y(), "children": v.child_GUIDS, "parent": v.parent_GUID
+                     ,"param_values": v.params})
+        bin = json.dumps(data)
+        self.send_cmd("sync_data",bin)
         
     def readPendingDataGrams(self):
         while self.udpSocket.hasPendingDatagrams():
