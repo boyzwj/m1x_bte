@@ -18,7 +18,9 @@ class Config():
                 "Selector": {"type": "Composite","params": {}},
                 "RandomSelector": {"type": "Composite","params": {}},
                 "Invert": {"type": "Decorator","params": {}},
-                "Print": {"type": "Action","params": {"content":"string"}},
+                "Repeat": {"type": "Decorator","params": {"times": {"type": "float","des": "重复次数"}}},
+                "UntilSuccess": {"type": "Decorator","params": {},"des": "直到成功"},  
+                "UntilFail": {"type": "Decorator","params": {},"des": "直到失败"},                 
              }
     }
 

@@ -1,4 +1,4 @@
-last_project: D:/project/project/Assets/ConfigAsset/ShareJsonConfig/1.json
+last_project: D:/project/project/Assets/ConfigAsset/ShareJsonConfig/3.json
 node_type:
   Action: {}
   Composite: {}
@@ -10,11 +10,39 @@ nodes:
     des: "\u5411\u76EE\u6807\u7784\u51C6"
     params: {}
     type: Action
+  Crouch:
+    des: "\u8E72\u4E0B"
+    params: {}
+    type: Action
+  EnemyInSight:
+    des: "\u654C\u4EBA\u5728\u89C6\u91CE\u5185"
+    params: {}
+    type: Condition
+  FindC4Spot:
+    des: "\u5BFB\u8DEF\u5230C4"
+    params: {}
+    type: Action
+  FindCloseEnemySpot:
+    des: "\u627E\u5230\u6700\u8FD1\u7684\u654C\u4EBA"
+    params: {}
+    type: Action
+  FindDefenceSpot:
+    des: "\u5BFB\u8DEF\u5230\u9632\u5B88\u70B9"
+    params: {}
+    type: Action
   FindPath:
     des: "\u5BFB\u8DEF"
     params: {}
     type: Action
   FindPatrolSpot:
+    params: {}
+    type: Action
+  FindRetreatSpot:
+    des: "\u5BFB\u8DEF\u5230\u64A4\u9000\u70B9"
+    params: {}
+    type: Action
+  FindSpawnC4Spot:
+    des: "\u5BFB\u8DEF\u5230\u4E0B\u5305\u70B9"
     params: {}
     type: Action
   Idle:
@@ -24,9 +52,17 @@ nodes:
         des: "\u79D2"
         type: float
     type: Action
+  InBombArea:
+    des: "\u5728\u70B8\u5F39\u533A\u57DF"
+    params: {}
+    type: Condition
   Invert:
     params: {}
     type: Decorator
+  PickUpC4Bomb:
+    des: "\u62FE\u53D6C4"
+    params: {}
+    type: Action
   PurchaseMainWeapon:
     params: {}
     type: Action
@@ -36,17 +72,39 @@ nodes:
   RandomSequence:
     params: {}
     type: Composite
+  ReloadWeapon:
+    des: "\u88C5\u5F39"
+    params: {}
+    type: Action
+  Repeat:
+    params:
+      times:
+        des: ''
+        type: int
+    type: Decorator
   Root:
     params: {}
     type: Root
+  SelectWeapon:
+    des: "\u9009\u62E9\u6B66\u5668"
+    params: {}
+    type: Action
   Selector:
     params: {}
     type: Composite
   Sequence:
     params: {}
     type: Composite
+  SpawnC4:
+    des: "\u4E0B\u5305"
+    params: {}
+    type: Action
   StartFire:
     des: "\u5F00\u67AA"
+    params: {}
+    type: Action
+  SwitchMelee:
+    des: "\u5207\u6362\u5230\u8FD1\u6218\u6B66\u5668"
     params: {}
     type: Action
   SwitchWeapon:
@@ -55,3 +113,9 @@ nodes:
   TurnAroundToTarget:
     params: {}
     type: Action
+  UtilFail:
+    params: {}
+    type: Decorator
+  UtilSuccess:
+    params: {}
+    type: Decorator
