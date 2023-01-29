@@ -1,4 +1,4 @@
-last_project: D:/project/project/Assets/ConfigAsset/ShareJsonConfig/3.json
+last_project: D:/project/project/Assets/ConfigAsset/ShareJsonConfig/1.json
 node_type:
   Action: {}
   Composite: {}
@@ -59,6 +59,14 @@ nodes:
   Invert:
     params: {}
     type: Decorator
+  MoveToCloseEnemy:
+    des: "\u79FB\u52A8\u5230\u6700\u8FD1\u654C\u4EBA"
+    params: {}
+    type: Action
+  Patrol:
+    des: "\u5DE1\u903B"
+    params: {}
+    type: Action
   PickUpC4Bomb:
     des: "\u62FE\u53D6C4"
     params: {}

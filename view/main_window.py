@@ -101,12 +101,12 @@ class MainWindow(QMainWindow):
                 print(f"unexpected cmd : {cmd}")
                 
     def OnGetList(self, content):
-        data = json.loads(content)
-        print(f"on get list : {data}")
+        infos = json.loads(content)
+        # print(f"on get list : {infos}")
         self.ai_list.clear()
-        for i in range(len(data)):
-            ai_id = data[i]
-            self.ai_list.addItem(str(ai_id),ai_id)
+        for i in range(len(infos)):
+            info = infos[i]
+            self.ai_list.addItem(info['name'],info['id'])
         
         
     def OnNodeStates(self, content):
