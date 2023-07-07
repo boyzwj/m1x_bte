@@ -1,4 +1,4 @@
-last_project: D:/project/project/Assets/ConfigAsset/ShareJsonConfig/1.json
+last_project: D:/project/ds/Assets/StreamingAssets/ConfigAsset/ShareJsonConfig/2.json
 node_type:
   Action: {}
   Composite: {}
@@ -10,12 +10,28 @@ nodes:
     des: "\u5411\u76EE\u6807\u7784\u51C6"
     params: {}
     type: Action
+  AttackOpponentSelected:
+    des: "\u53D1\u73B0\u9501\u5B9A\u654C\u4EBA"
+    params: {}
+    type: Condition
+  BombDeployed:
+    des: "C4\u5DF2\u90E8\u7F72"
+    params: {}
+    type: Condition
   Crouch:
     des: "\u8E72\u4E0B"
     params: {}
     type: Action
+  DefuseC4Bomb:
+    des: "\u62C6\u5F39"
+    params: {}
+    type: Action
   EnemyInSight:
     des: "\u654C\u4EBA\u5728\u89C6\u91CE\u5185"
+    params: {}
+    type: Condition
+  ExistC4Projectile:
+    des: "\u5B58\u5728C4\u6389\u843D"
     params: {}
     type: Condition
   FindC4Spot:
@@ -41,10 +57,10 @@ nodes:
     des: "\u5BFB\u8DEF\u5230\u64A4\u9000\u70B9"
     params: {}
     type: Action
-  FindSpawnC4Spot:
-    des: "\u5BFB\u8DEF\u5230\u4E0B\u5305\u70B9"
+  HasC4:
+    des: "\u8EAB\u4E0A\u6709C4"
     params: {}
-    type: Action
+    type: Condition
   Idle:
     des: "\u53D1\u5446"
     params:
@@ -59,6 +75,30 @@ nodes:
   Invert:
     params: {}
     type: Decorator
+  IsCT:
+    des: "\u662F\u8B66"
+    params: {}
+    type: Condition
+  IsT:
+    des: "\u662F\u532A"
+    params: {}
+    type: Condition
+  MatchInProgress:
+    des: "\u6218\u6597\u8FDB\u884C\u4E2D"
+    params: {}
+    type: Condition
+  MoveToC4DeployArea:
+    des: "\u79FB\u52A8\u5230\u90E8\u7F72\u7684\u70B8\u5F39\u70B9"
+    params: {}
+    type: Action
+  MoveToC4Projectile:
+    des: "\u79FB\u52A8\u5230C4\u6389\u843D"
+    params: {}
+    type: Action
+  MoveToC4Spot:
+    des: "\u79FB\u52A8\u5230\u4E0B\u5305\u70B9"
+    params: {}
+    type: Action
   MoveToCloseEnemy:
     des: "\u79FB\u52A8\u5230\u6700\u8FD1\u654C\u4EBA"
     params: {}

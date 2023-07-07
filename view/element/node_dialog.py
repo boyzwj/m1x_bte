@@ -59,4 +59,3 @@ class  NodeDialog(QDialog):
     def reject(self) -> None:
         return super().reject()
         
-            
