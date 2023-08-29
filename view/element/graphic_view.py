@@ -13,6 +13,9 @@ class GraphicView(QGraphicsView):
 
     def __init__(self, parent: QWidget):
         super(GraphicView, self).__init__(parent)
+        # hide the scrollbar
+        super(GraphicView, self).setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
+        super(GraphicView, self).setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAlwaysOff)
         self.file_name = None
         self.startPos = None
         self.start_link = None
@@ -80,10 +83,10 @@ class GraphicView(QGraphicsView):
         for guid, v in self.nodes.items():
             for c_guid in v.child_GUIDS:
                 self.add_link(v,self.nodes[c_guid])
-                
-            
-    
-    
+
+
+
+
     
     
     def clear_workspace(self):
@@ -155,7 +158,7 @@ class GraphicView(QGraphicsView):
         if self.adding_node_name in g.config.data['nodes'].keys() and self.adding_node_name != "Root":
             node = QNode(node_name=self.adding_node_name)
             self.add_node(node)
-            node.setPos( self.mapToScene(e.position().toPoint()))            
+            node.setPos( self.mapToScene(e.position().toPoint()))
         else:
             self.adding_node_name = None
             
@@ -209,17 +212,11 @@ class GraphicView(QGraphicsView):
             # compute the difference between the current cursor position and the
             # previous saved origin point
             delta = self.startPos - event.pos()
-            # get the current transformation (which is a matrix that includes the
-            # scaling ratios
-            transform = self.transform()
-            # m11 refers to the horizontal scale, m22 to the vertical scale;
-            # divide the delta by their corresponding ratio
-            delta_x = delta.x() / transform.m11()
-            delta_y = delta.y() / transform.m22()
-            # translate the current sceneRect by the delta
-            self.setSceneRect(self.sceneRect().translated(delta_x, delta_y))
+            # move view
+            self.move_view(delta.x(), delta.y())
             # update the new origin point to the current position
             self.startPos = event.pos()
+
         elif isinstance(self.start_link, QNode) and QApplication.mouseButtons() == Qt.MouseButton.RightButton:
             p1: QPointF = self.start_link.link_start_pos()
             p2: QPointF = self.mapToScene(event.pos())
@@ -299,6 +296,15 @@ class GraphicView(QGraphicsView):
             print("A")
         elif event.key() == Qt.Key.Key_D:
             print("D")
+        # elif event.key() == Qt.Key.Key_F:
+            # items = self.scene().selectedItems()
+            # if len(items) > 0:
+            #     current_pos = self.sceneRect().center()
+            #     target_pos = items[0].pos()
+            #     delta = target_pos - current_pos
+            #     self.move_view(delta.x(), delta.y())
+            # else:
+            #     self.move_view(0, 0)
         elif event.key() == Qt.Key.Key_Delete:
             self.del_selected_nodes()
         elif event.key() == Qt.Key.Key_Space:
@@ -367,7 +373,18 @@ class GraphicView(QGraphicsView):
             if node is not None:
                 node.set_state(state)
                      
-
-
-
-
+    def move_view(self, x, y):
+        # get the current transformation (which is a matrix that includes the
+        # scaling ratios
+        transform = self.transform()
+        # m11 refers to the horizontal scale, m22 to the vertical scale;
+        # divide the delta by their corresponding ratio
+        delta_x = x / transform.m11()
+        delta_y = y / transform.m22()
+        # translate the current sceneRect by the delta
+        self.setSceneRect(self.sceneRect().translated(delta_x, delta_y))
+        # sync the rect modification to the scrollbar
+        hs = super(GraphicView, self).horizontalScrollBar()
+        vs = super(GraphicView, self).verticalScrollBar()
+        hs.setValue(hs.value() + x)
+        vs.setValue(vs.value() + y)
