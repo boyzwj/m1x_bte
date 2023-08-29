@@ -22,12 +22,16 @@ class  NodeDialog(QDialog):
         for name, attr in node.data.items():
             tp = attr['type']
             des = attr['des']
+            defaultValue = attr.get('default_value')
             if tp == "int":
                 ipt = QLineEdit(self)
                 intValidator = QIntValidator(self)
                 ipt.setValidator(intValidator)
                 if name in self.node.params.keys():
-                    ipt.setText(self.node.params[name])
+                    current_value = self.node.params[name]
+                    if current_value == None or current_value == '':
+                        current_value = defaultValue
+                    ipt.setText(current_value)
                 else:
                     self.node.params[name] = "0"
                     ipt.setText("0")
@@ -36,14 +40,20 @@ class  NodeDialog(QDialog):
                 floatValidator = QDoubleValidator(self)
                 ipt.setValidator(floatValidator)
                 if name in self.node.params.keys():
-                  ipt.setText(self.node.params[name])
+                    current_value = self.node.params[name]
+                    if current_value == None or current_value == '':
+                        current_value = defaultValue
+                    ipt.setText(current_value)
                 else:
                     self.node.params[name] = "0"
                     ipt.setText("0")
             elif tp == "string":
                 ipt = QLineEdit(self)
                 if name in self.node.params.keys():
-                    ipt.setText(self.node.params[name])
+                    current_value = self.node.params[name]
+                    if current_value == None:
+                        current_value = defaultValue
+                    ipt.setText(current_value)
                 else:
                     self.node.params[name] = ""
                     ipt.setText("")
