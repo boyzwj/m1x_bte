@@ -20,7 +20,7 @@ class AddNodeDialog(QDialog):
         super(AddNodeDialog, self).__init__()
         self.ui = Ui_AddNodeDialog()
         self.ui.setupUi(self)
-        self.setWindowFlags(Qt.WindowStaysOnTopHint)
+        self.setWindowFlags(Qt.Tool)
         # self.setFixedSize(self.width(), self.height())
         self.node_name = node_name
         self.initUI()
@@ -82,7 +82,7 @@ class AddNodeDialog(QDialog):
         current_row = self.ui.tableWidget.currentRow()
         if current_row < 0:
             return QMessageBox.warning(self, 'Warning', 'Please select a record to delete')
-        k = self.ui.tableWidget.item(current_row, 0).text()
+        k = self.ui.tableWidget.cellWidget(current_row, 0).text()
         button = QMessageBox.question(
             self,
             'Confirmation',
@@ -100,7 +100,7 @@ class AddNodeDialog(QDialog):
             current_row = self.ui.tableWidget.currentRow()
             param = None
             if current_row >= 0:
-                current_row_item = self.ui.tableWidget.item(current_row, 0)
+                current_row_item = self.ui.tableWidget.cellWidget(current_row, 0)
                 if current_row_item is not None:
                     k = current_row_item.text()
                     param = self.params.get(k)
@@ -130,9 +130,11 @@ class AddNodeDialog(QDialog):
             ["Param Name", "Param Type", "DefaultValue", "Param Des", "Remove"])
         i = 0
         for k, v in self.params.items():
-            item1 = QTableWidgetItem(k)
-            item1.setFlags(Qt.ItemFlag.ItemIsEnabled)
-            self.ui.tableWidget.setItem(i, 0, item1)
+            item_name = QLineEdit()
+            item_name.setText(k)
+            item_name.editingFinished.connect(lambda temp_param_name=k: self.modify_param_name(temp_param_name))
+            self.ui.tableWidget.setCellWidget(i, 0, item_name)
+            self.ui.tableWidget.setColumnWidth(0, 150)
 
             item_type_cb = QComboBox()
             item_type_cb.addItems(NodeParamType)
@@ -149,6 +151,7 @@ class AddNodeDialog(QDialog):
             itemDes.setText(v.get('des'))
             itemDes.editingFinished.connect(self.modify_param_des)
             self.ui.tableWidget.setCellWidget(i, 3, itemDes)
+            self.ui.tableWidget.setColumnWidth(3, 250)
 
             delBtn = QPushButton("Delete")
             delBtn.clicked.connect(self.delete_param_item)
@@ -159,12 +162,12 @@ class AddNodeDialog(QDialog):
         param_name = self.ui.iptParamName.text().strip()
         param_type = self.ui.cbParamType.currentText()
         param_des = self.ui.iptParamDes.text().strip()
-        param_defaultValue = self.ui.iptParamDefaultValue.text().strip()
+        param_default_value = self.ui.iptParamDefaultValue.text().strip()
         if param_name == "":
             box = QMessageBox()
             box.critical(self, "Error", "Empty Param Name !")
         else:
-            self.params[param_name] = {'type': param_type, "default_value": param_defaultValue, 'des': param_des}
+            self.params[param_name] = {'type': param_type, "default_value": param_default_value, 'des': param_des}
             self.update_table()
             self.update_param_editor(True)
 
@@ -217,20 +220,44 @@ class AddNodeDialog(QDialog):
     def modify_param_type(self, index):
         current_row = self.ui.tableWidget.currentRow()
         if current_row >= 0:
-            k = self.ui.tableWidget.item(current_row, 0).text()
+            k = self.ui.tableWidget.cellWidget(current_row, 0).text()
             self.modify_param_field(k, 'type', NodeParamType[index])
+
+    def modify_param_name(self, old_name):
+        current_row = self.ui.tableWidget.currentRow()
+        if current_row >= 0:
+            new_name = self.ui.tableWidget.cellWidget(current_row, 0).text().strip()
+            if old_name == new_name:
+                return
+            if new_name == "":
+                box = QMessageBox()
+                box.critical(self, "Error", "Empty Param Name !")
+                self.update_table()
+                self.update_param_editor(True)
+                return
+            if self.params.get(new_name) is not None:
+                box = QMessageBox()
+                box.critical(self, "Error", "Param name has existed!")
+                self.update_table()
+                self.update_param_editor(True)
+                return
+            self.params[new_name] = self.params[old_name]
+            del self.params[old_name]
+            self.update_table()
+            self.update_param_editor(True)
+            self.do_update_node()
 
     def modify_param_default_value(self):
         current_row = self.ui.tableWidget.currentRow()
         if current_row >= 0:
-            k = self.ui.tableWidget.item(current_row, 0).text()
+            k = self.ui.tableWidget.cellWidget(current_row, 0).text()
             v = self.ui.tableWidget.cellWidget(current_row, 2).text().strip()
             self.modify_param_field(k, 'default_value', v)
 
     def modify_param_des(self):
         current_row = self.ui.tableWidget.currentRow()
         if current_row >= 0:
-            k = self.ui.tableWidget.item(current_row, 0).text()
+            k = self.ui.tableWidget.cellWidget(current_row, 0).text()
             v = self.ui.tableWidget.cellWidget(current_row, 3).text().strip()
             self.modify_param_field(k, 'des', v)
 
