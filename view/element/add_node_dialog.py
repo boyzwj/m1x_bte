@@ -27,6 +27,7 @@ class AddNodeDialog(QDialog):
 
     def initUI(self):
         data = g.config.data['nodes'].get(self.node_name)
+        g.test_widget = self
         if data is not None and data:
             self.mode = NodeDialogMode.EDIT
             self.params = data.get('params', {})
@@ -46,10 +47,12 @@ class AddNodeDialog(QDialog):
 
         self.ui.tableWidget.currentCellChanged.connect(self.on_item_selection_changed)
         self.ui.iptNodeName.setText(self.node_name)
-        self.ui.cbNodeType.setCurrentText(self.node_type)
         self.ui.iptNodeDes.setText(self.node_des)
+        self.ui.cbNodeType.setCurrentText(self.node_type)
         self.ui.cbNodeType.addItems(["Action", "Condition"])
+        self.ui.cbNodeType.installEventFilter(self)
         self.ui.cbParamType.addItems(NodeParamType)
+        self.ui.cbParamType.installEventFilter(self)
         self.ui.iptNodeName.setAttribute(Qt.WA_InputMethodEnabled, False)
         self.ui.iptParamName.setAttribute(Qt.WA_InputMethodEnabled, False)
         self.ui.iptParamName.textEdited.connect(self.on_edit_param_name)
@@ -122,40 +125,54 @@ class AddNodeDialog(QDialog):
         else:
             self.ui.btnAdd.setText("update")
 
+    #禁用ComboBox的滚轮事件
+    def eventFilter(self, target, triggered_event) -> bool:
+        if triggered_event.type() == QEvent.Type.Wheel:
+            return True
+        return QMainWindow.eventFilter(self, target, triggered_event)
+
     def update_table(self):
         self.ui.tableWidget.clear()
         self.ui.tableWidget.setColumnCount(5)
         self.ui.tableWidget.setRowCount(len(self.params.keys()))
         self.ui.tableWidget.setHorizontalHeaderLabels(
-            ["Param Name", "Param Type", "DefaultValue", "Param Des", "Remove"])
+            ["Param Name", "Param Type", "Param Des", "DefaultValue", "Remove"])
+        self.ui.tableWidget.setColumnWidth(0, 150)
+        self.ui.tableWidget.setColumnWidth(2, 250)
+
         i = 0
         for k, v in self.params.items():
+            item_index = 0
             item_name = QLineEdit()
             item_name.setText(k)
             item_name.editingFinished.connect(lambda temp_param_name=k: self.modify_param_name(temp_param_name))
-            self.ui.tableWidget.setCellWidget(i, 0, item_name)
-            self.ui.tableWidget.setColumnWidth(0, 150)
+            self.ui.tableWidget.setCellWidget(i, item_index, item_name)
 
+            item_index = 1
             item_type_cb = QComboBox()
             item_type_cb.addItems(NodeParamType)
             item_type_cb.currentIndexChanged.connect(self.modify_param_type)
             item_type_cb.setCurrentText(v.get('type'))
-            self.ui.tableWidget.setCellWidget(i, 1, item_type_cb)
+            item_type_cb.installEventFilter(self)
+            self.ui.tableWidget.setCellWidget(i, item_index, item_type_cb)
 
-            itemDefaultValue = QLineEdit()
-            itemDefaultValue.setText(v.get('default_value'))
-            itemDefaultValue.editingFinished.connect(self.modify_param_default_value)
-            self.ui.tableWidget.setCellWidget(i, 2, itemDefaultValue)
+            item_index = 2
+            item_des = QLineEdit()
+            item_des.setText(v.get('des'))
+            item_des.editingFinished.connect(self.modify_param_des)
+            self.ui.tableWidget.setCellWidget(i, item_index, item_des)
 
-            itemDes = QLineEdit()
-            itemDes.setText(v.get('des'))
-            itemDes.editingFinished.connect(self.modify_param_des)
-            self.ui.tableWidget.setCellWidget(i, 3, itemDes)
-            self.ui.tableWidget.setColumnWidth(3, 250)
+            item_index = 3
+            item_default_value = QLineEdit()
+            item_default_value.setText(v.get('default_value'))
+            item_default_value.editingFinished.connect(self.modify_param_default_value)
+            self.ui.tableWidget.setCellWidget(i, item_index, item_default_value)
 
-            delBtn = QPushButton("Delete")
-            delBtn.clicked.connect(self.delete_param_item)
-            self.ui.tableWidget.setCellWidget(i, 4, delBtn)
+            item_index = 4
+            del_btn = QPushButton("Delete")
+            del_btn.clicked.connect(self.delete_param_item)
+            self.ui.tableWidget.setCellWidget(i, item_index, del_btn)
+
             i = i + 1
 
     def add_param(self, event):
@@ -251,17 +268,19 @@ class AddNodeDialog(QDialog):
         current_row = self.ui.tableWidget.currentRow()
         if current_row >= 0:
             k = self.ui.tableWidget.cellWidget(current_row, 0).text()
-            v = self.ui.tableWidget.cellWidget(current_row, 2).text().strip()
+            v = self.ui.tableWidget.cellWidget(current_row, 3).text().strip()
             self.modify_param_field(k, 'default_value', v)
 
     def modify_param_des(self):
         current_row = self.ui.tableWidget.currentRow()
         if current_row >= 0:
             k = self.ui.tableWidget.cellWidget(current_row, 0).text()
-            v = self.ui.tableWidget.cellWidget(current_row, 3).text().strip()
+            v = self.ui.tableWidget.cellWidget(current_row, 2).text().strip()
             self.modify_param_field(k, 'des', v)
 
     def modify_param_field(self, param_name, field_key, field_value):
+        if self.params[param_name].get(field_key) == field_value:
+            return
         self.params[param_name][field_key] = field_value
         self.update_table()
         self.update_param_editor(True)
