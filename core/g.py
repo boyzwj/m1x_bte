@@ -17,10 +17,9 @@ def save_config():
 def save_file(nodes,file_name):
     data = []
     for k,v in nodes.items():
-        # paramStr = json.dumps(v.params)
+        formatted_params = {k: v for k, v in v.params.items() if v is not None}
         data.append({"guid": k ,"name": v.name, "x": v.x(), "y": v.y(), "children": v.child_GUIDS, "parent": v.parent_GUID
-                    #  ,"paramStr": paramStr
-                     ,"param_values": v.params})
+                     ,"param_values": formatted_params})
     bin = json.dumps(data, indent=4)
     with open(file_name,'w') as f:
         f.write(bin)
