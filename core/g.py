@@ -21,7 +21,7 @@ def save_file(nodes,file_name):
         data.append({"guid": k ,"name": v.name, "x": v.x(), "y": v.y(), "children": v.child_GUIDS, "parent": v.parent_GUID
                     #  ,"paramStr": paramStr
                      ,"param_values": v.params})
-    bin = json.dumps(data)
+    bin = json.dumps(data, indent=4)
     with open(file_name,'w') as f:
         f.write(bin)
         f.close()
