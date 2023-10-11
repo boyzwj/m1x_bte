@@ -74,7 +74,7 @@ class MainWindow(QMainWindow):
         for k, v in nodes.items():
             data.append({"guid": k, "name": v.name, "x": v.x(), "y": v.y(
             ), "children": v.child_GUIDS, "parent": v.parent_GUID, "param_values": v.params})
-        bin = json.dumps(data, indent=4)
+        bin = json.dumps(data)
         self.send_cmd("sync_data", bin)
 
     def readPendingDataGrams(self):
