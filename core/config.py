@@ -67,7 +67,7 @@ class Config():
                 table[node_name] = {}
                 for param_name, param_data in params.items():
                     table[node_name][param_name] = param_data.get("default_value")
-        data_str = json.dumps(table)
+        data_str = json.dumps(table, indent=4)
         with open(path, 'w') as f:
             f.write(data_str)
             f.close()
