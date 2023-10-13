@@ -16,7 +16,7 @@ class QNode(QGraphicsItem):
     parent_node = ""
     params = {}
 
-    def __init__(self, parent=None, node_name="", guid: str = None, params={}) -> None:
+    def __init__(self, parent=None, node_name="", guid: str = None, params=None) -> None:
         super(QNode, self).__init__(parent)
         self.name = node_name
         self.__height = 50
@@ -25,6 +25,8 @@ class QNode(QGraphicsItem):
         self.parent_GUID = ""
         cfg_data = g.config.data['nodes'].get(self.name)
         self.has_config = cfg_data is not None
+        if params is None:
+            params = {}
         self.params = params
         self.state = 0
 
