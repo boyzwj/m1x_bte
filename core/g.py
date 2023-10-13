@@ -14,11 +14,12 @@ def save_config():
     # global config    
     config.save()
 
-def save_file(nodes,file_name):
-    data = []
+def save_file(nodes, file_name):
+    default_values = config.get_default_values()
+    data = {"nodes": [], "default_values": default_values}
     for k,v in nodes.items():
         formatted_params = {k: v for k, v in v.params.items() if v is not None}
-        data.append({"guid": k ,"name": v.name, "x": v.x(), "y": v.y(), "children": v.child_GUIDS, "parent": v.parent_GUID
+        data['nodes'].append({"guid": k ,"name": v.name, "x": v.x(), "y": v.y(), "children": v.child_GUIDS, "parent": v.parent_GUID
                      ,"param_values": formatted_params})
     bin = json.dumps(data, indent=4)
     with open(file_name,'w') as f:

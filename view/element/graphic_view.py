@@ -61,14 +61,14 @@ class GraphicView(QGraphicsView):
             return
         self.file_name = file_name
         g.config.data['last_project'] = self.file_name
-        g.save_config()
         self.load_from_data(data)
+        g.save_config()
 
            
             
     def load_from_data(self, data):
         self.clear_workspace()
-        for v in data:
+        for v in data['nodes']:
             guid = v['guid']
             name = v['name']
             x = v['x']
@@ -83,11 +83,18 @@ class GraphicView(QGraphicsView):
         for guid, v in self.nodes.items():
             for c_guid in v.child_GUIDS:
                 self.add_link(v,self.nodes[c_guid])
+        for node_name, v in data['default_values'].items():
+            node_config = g.config.data['nodes'].get(node_name)
+            if node_config is not None:
+                for param_name, loaded_param_default_value in v.items():
+                    param_config = node_config['params'].get(param_name)
+                    if param_config is not None:
+                        param_config['default_value'] = loaded_param_default_value
 
 
 
 
-    
+
     
     def clear_workspace(self):
         self.scene().clear()
