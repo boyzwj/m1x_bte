@@ -52,6 +52,7 @@ class MainWindow(QMainWindow):
         self.ui.action_open.triggered.connect(self.action_open)
         self.ui.action_save.triggered.connect(self.action_save)
         self.ui.action_add_node.triggered.connect(self.action_add_node)
+        self.ui.actionupgrade.triggered.connect(self.action_upgrade)
 
         self.udpSocket = QUdpSocket(self)
         self.udpSocket.bind(QHostAddress("127.0.0.1"), 0)
@@ -150,6 +151,16 @@ class MainWindow(QMainWindow):
             self.graphicsView.save_file(file_name=filename)
         else:
             self.graphicsView.save_file()
+
+    @Slot()
+    def action_upgrade(self):
+        dialog = QFileDialog()
+        last_path = g.config.data['last_project']
+        folder_path = dialog.getExistingDirectory(
+            self, "Open Folder", last_path)
+        if folder_path == "":
+            return
+        self.graphicsView.upgrade_all_files(folder_path)
 
     @Slot()
     def action_add_node(self):

@@ -3,7 +3,7 @@
 ################################################################################
 ## Form generated from reading UI file 'main_window.ui'
 ##
-## Created by: Qt User Interface Compiler version 6.4.0
+## Created by: Qt User Interface Compiler version 6.5.2
 ##
 ## WARNING! All changes made in this file will be lost when recompiling UI file!
 ################################################################################
@@ -39,6 +39,8 @@ class Ui_MainWindow(object):
         self.action_attach.setObjectName(u"action_attach")
         self.action_add_node = QAction(MainWindow)
         self.action_add_node.setObjectName(u"action_add_node")
+        self.actionupgrade = QAction(MainWindow)
+        self.actionupgrade.setObjectName(u"actionupgrade")
         self.centralwidget = QWidget(MainWindow)
         self.centralwidget.setObjectName(u"centralwidget")
         sizePolicy.setHeightForWidth(self.centralwidget.sizePolicy().hasHeightForWidth())
@@ -67,6 +69,7 @@ class Ui_MainWindow(object):
         self.menubar.addAction(self.menuSettings.menuAction())
         self.menu.addAction(self.action_open)
         self.menu.addAction(self.action_save)
+        self.menu.addAction(self.actionupgrade)
         self.menuSettings.addAction(self.action_add_node)
 
         self.retranslateUi(MainWindow)
@@ -89,6 +92,7 @@ class Ui_MainWindow(object):
         self.action_attach.setShortcut(QCoreApplication.translate("MainWindow", u"Ctrl+D", None))
 #endif // QT_CONFIG(shortcut)
         self.action_add_node.setText(QCoreApplication.translate("MainWindow", u"add_node", None))
+        self.actionupgrade.setText(QCoreApplication.translate("MainWindow", u"upgrade", None))
         self.menu.setTitle(QCoreApplication.translate("MainWindow", u"File", None))
         self.menuSettings.setTitle(QCoreApplication.translate("MainWindow", u"Settings", None))
         self.toolBar.setWindowTitle(QCoreApplication.translate("MainWindow", u"toolBar", None))

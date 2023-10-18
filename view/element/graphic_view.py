@@ -6,6 +6,7 @@ from view.element.tmp_link import *
 from view.element.link import *
 import json
 from core import g
+import os
 
 class GraphicView(QGraphicsView):
     nodes = {}
@@ -64,7 +65,14 @@ class GraphicView(QGraphicsView):
         self.load_from_data(data)
         g.save_config()
 
-           
+    def upgrade_all_files(self, folder_path):
+        for root, ds, fs in os.walk(folder_path):
+            print(root)
+            for f in fs:
+                fullname = os.path.join(root, f)
+                if fullname.endswith('.json'):
+                    self.load_file(fullname)
+                    self.save_file(fullname)
             
     def load_from_data(self, data):
         self.clear_workspace()
