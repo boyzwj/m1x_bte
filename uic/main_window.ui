@@ -59,6 +59,7 @@
     </property>
     <addaction name="action_open"/>
     <addaction name="action_save"/>
+    <addaction name="actionupgrade"/>
    </widget>
    <widget class="QMenu" name="menuSettings">
     <property name="title">
@@ -107,6 +108,11 @@
   <action name="action_add_node">
    <property name="text">
     <string>add_node</string>
+   </property>
+  </action>
+  <action name="actionupgrade">
+   <property name="text">
+    <string>upgrade</string>
    </property>
   </action>
  </widget>
