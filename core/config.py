@@ -43,7 +43,6 @@ class Config():
         file = open(path, 'w', encoding='utf-8')
         yaml.dump(self.data, file)
         file.close()
-        self.save_node_params_table()
 
     def load(self, path: str = "config/conf.yaml"):
         if os.path.isfile(path):
@@ -51,15 +50,7 @@ class Config():
         else:
             self.save(path)
 
-    def save_node_params_table(self):
-        path1 = sys.executable
-        path2 = os.path.dirname(path1)
-        path3 = os.path.dirname(path2) + "\\Assets\\StreamingAssets\\ConfigAsset\\ShareJsonConfig"
-        directory_existed = os.path.exists(path3)
-        if not directory_existed:
-            return
-        path = path3+"\\paramsConfig.json"
-
+    def get_default_values(self):
         table = {}
         for node_name, v in self.data['nodes'].items():
             params = v['params']
@@ -67,7 +58,4 @@ class Config():
                 table[node_name] = {}
                 for param_name, param_data in params.items():
                     table[node_name][param_name] = param_data.get("default_value")
-        data_str = json.dumps(table, indent=4)
-        with open(path, 'w') as f:
-            f.write(data_str)
-            f.close()
+        return table
