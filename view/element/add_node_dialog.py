@@ -12,7 +12,7 @@ class NodeDialogMode(Enum):
     EDIT = 2
 
 
-NodeParamType = ["int", "float", "string"]
+NodeParamType = ["int", "float", "string", "float_range"]
 
 
 class AddNodeDialog(QDialog):
