@@ -65,7 +65,7 @@
      <widget class="QPushButton" name="delButton">
       <property name="geometry">
        <rect>
-        <x>450</x>
+        <x>620</x>
         <y>20</y>
         <width>81</width>
         <height>31</height>
@@ -75,32 +75,12 @@
        <string>删除该节点</string>
       </property>
      </widget>
-     <widget class="QLineEdit" name="iptNodeDes">
-      <property name="geometry">
-       <rect>
-        <x>290</x>
-        <y>20</y>
-        <width>151</width>
-        <height>21</height>
-       </rect>
-      </property>
-     </widget>
-     <widget class="QLineEdit" name="iptParamDes">
-      <property name="geometry">
-       <rect>
-        <x>280</x>
-        <y>100</y>
-        <width>161</width>
-        <height>21</height>
-       </rect>
-      </property>
-     </widget>
      <widget class="QLineEdit" name="iptParamDefaultValue">
       <property name="geometry">
        <rect>
-        <x>540</x>
-        <y>100</y>
-        <width>71</width>
+        <x>610</x>
+        <y>110</y>
+        <width>81</width>
         <height>21</height>
        </rect>
       </property>
@@ -108,10 +88,10 @@
      <widget class="QComboBox" name="cbParamType">
       <property name="geometry">
        <rect>
-        <x>190</x>
+        <x>230</x>
         <y>100</y>
-        <width>51</width>
-        <height>22</height>
+        <width>91</width>
+        <height>21</height>
        </rect>
       </property>
      </widget>
@@ -136,7 +116,7 @@
        <rect>
         <x>50</x>
         <y>100</y>
-        <width>91</width>
+        <width>121</width>
         <height>21</height>
        </rect>
       </property>
@@ -198,7 +178,7 @@
      <widget class="QPushButton" name="btnAdd">
       <property name="geometry">
        <rect>
-        <x>630</x>
+        <x>710</x>
         <y>100</y>
         <width>75</width>
         <height>24</height>
@@ -237,7 +217,7 @@
      <widget class="QLabel" name="label_5">
       <property name="geometry">
        <rect>
-        <x>150</x>
+        <x>190</x>
         <y>100</y>
         <width>31</width>
         <height>21</height>
@@ -253,7 +233,7 @@
      <widget class="QLabel" name="label_6">
       <property name="geometry">
        <rect>
-        <x>240</x>
+        <x>320</x>
         <y>100</y>
         <width>31</width>
         <height>21</height>
@@ -269,8 +249,8 @@
      <widget class="QLabel" name="label_7">
       <property name="geometry">
        <rect>
-        <x>450</x>
-        <y>100</y>
+        <x>610</x>
+        <y>90</y>
         <width>81</width>
         <height>21</height>
        </rect>
@@ -337,6 +317,26 @@
       </property>
       <property name="alignment">
        <set>Qt::AlignLeading|Qt::AlignLeft|Qt::AlignVCenter</set>
+      </property>
+     </widget>
+     <widget class="QTextEdit" name="iptNodeDes">
+      <property name="geometry">
+       <rect>
+        <x>290</x>
+        <y>10</y>
+        <width>321</width>
+        <height>71</height>
+       </rect>
+      </property>
+     </widget>
+     <widget class="QTextEdit" name="iptParamDes">
+      <property name="geometry">
+       <rect>
+        <x>360</x>
+        <y>90</y>
+        <width>241</width>
+        <height>51</height>
+       </rect>
       </property>
      </widget>
     </widget>
