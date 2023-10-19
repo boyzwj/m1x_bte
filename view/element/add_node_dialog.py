@@ -178,7 +178,7 @@ class AddNodeDialog(QDialog):
     def add_param(self, event):
         param_name = self.ui.iptParamName.text().strip()
         param_type = self.ui.cbParamType.currentText()
-        param_des = self.ui.iptParamDes.text().strip()
+        param_des = self.ui.iptParamDes.toPlainText().strip()
         param_default_value = self.ui.iptParamDefaultValue.text().strip()
         if param_name == "":
             box = QMessageBox()
@@ -197,7 +197,7 @@ class AddNodeDialog(QDialog):
 
     def do_add_node(self):
         node_name = self.ui.iptNodeName.text().strip()
-        node_desc = self.ui.iptNodeDes.text().strip()
+        node_desc = self.ui.iptNodeDes.toPlainText().strip()
         node_type = self.ui.cbNodeType.currentText().strip()
 
         if node_name == "":
@@ -219,7 +219,7 @@ class AddNodeDialog(QDialog):
 
     def do_update_node(self):
         node_name = self.ui.iptNodeName.text().strip()
-        node_desc = self.ui.iptNodeDes.text().strip()
+        node_desc = self.ui.iptNodeDes.toPlainText().strip()
         node_type = self.ui.cbNodeType.currentText().strip()
 
         if node_name == "":
