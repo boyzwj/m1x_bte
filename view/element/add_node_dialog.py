@@ -48,8 +48,8 @@ class AddNodeDialog(QDialog):
         self.ui.tableWidget.currentCellChanged.connect(self.on_item_selection_changed)
         self.ui.iptNodeName.setText(self.node_name)
         self.ui.iptNodeDes.setText(self.node_des)
-        self.ui.cbNodeType.setCurrentText(self.node_type)
         self.ui.cbNodeType.addItems(["Action", "Condition"])
+        self.ui.cbNodeType.setCurrentText(self.node_type)
         self.ui.cbNodeType.installEventFilter(self)
         self.ui.cbParamType.addItems(NodeParamType)
         self.ui.cbParamType.installEventFilter(self)
@@ -132,6 +132,7 @@ class AddNodeDialog(QDialog):
         return QMainWindow.eventFilter(self, target, triggered_event)
 
     def update_table(self):
+        temp = self.ui.tableWidget.verticalScrollBar().sliderPosition()
         self.ui.tableWidget.clear()
         self.ui.tableWidget.setColumnCount(5)
         self.ui.tableWidget.setRowCount(len(self.params.keys()))
@@ -139,7 +140,6 @@ class AddNodeDialog(QDialog):
             ["Param Name", "Param Type", "Param Des", "DefaultValue", "Remove"])
         self.ui.tableWidget.setColumnWidth(0, 150)
         self.ui.tableWidget.setColumnWidth(2, 250)
-
         i = 0
         for k, v in self.params.items():
             item_index = 0
@@ -174,6 +174,7 @@ class AddNodeDialog(QDialog):
             self.ui.tableWidget.setCellWidget(i, item_index, del_btn)
 
             i = i + 1
+        self.ui.tableWidget.verticalScrollBar().setSliderPosition(temp)
 
     def add_param(self, event):
         param_name = self.ui.iptParamName.text().strip()
