@@ -72,8 +72,7 @@ class QNode(QGraphicsItem):
         else:
             self.tail_position = None
 
-        if self.has_config:
-            self.setFlag(QGraphicsItem.GraphicsItemFlag.ItemIsSelectable |
+        self.setFlag(QGraphicsItem.GraphicsItemFlag.ItemIsSelectable |
                          QGraphicsItem.GraphicsItemFlag.ItemIsMovable)
 
     def add_child(self, child):
