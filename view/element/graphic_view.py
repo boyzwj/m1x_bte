@@ -98,11 +98,6 @@ class GraphicView(QGraphicsView):
                     param_config = node_config['params'].get(param_name)
                     if param_config is not None:
                         param_config['default_value'] = loaded_param_default_value
-
-
-
-
-
     
     def clear_workspace(self):
         self.scene().clear()
@@ -324,6 +319,10 @@ class GraphicView(QGraphicsView):
             self.del_selected_nodes()
         elif event.key() == Qt.Key.Key_Space:
             self.align_nodes()
+        elif event.matches(QKeySequence.Copy):
+            self.copy_nodes()
+        elif event.matches(QKeySequence.Paste):
+            self.paste_nodes()
         return super().keyPressEvent(event)
 
 
@@ -379,6 +378,72 @@ class GraphicView(QGraphicsView):
         node.setPos(x, y)
         self.update_related_links(node)
         return y        
+
+    def copy_nodes(self):
+        items = self.scene().selectedItems()
+        default_values = g.config.get_default_values()
+        data = {"nodes": [], "default_values": default_values}
+        for item in items:
+            data['nodes'].append(
+                {"guid": item.GUID, "name": item.name, "x": item.x(), "y": item.y(), "children": item.child_GUIDS, "parent": item.parent_GUID,
+                 "param_values": item.params})
+        bin = json.dumps(data, indent=4)
+        QApplication.clipboard().setText(bin)
+
+    def paste_nodes(self):
+        copy_str = QApplication.clipboard().text()
+        json_table = json.loads(copy_str)
+        selections = self.try_load_from_clipboard(json_table)
+        self.scene().clearSelection()
+        for selection in selections:
+            selection.setSelected(True)
+
+    def try_load_from_clipboard(self, data):
+        nodes = []
+
+        nodes_guid_map = {}
+
+        for v in data['nodes']:
+            guid = v['guid']
+            name = v['name']
+            # 加点偏移不然完全看不出粘贴了东西
+            x = v['x'] + 50
+            y = v['y'] + 50
+            child_GUIDS = v['children']
+            parent = v['parent']
+            params = v['param_values']
+            node = QNode(node_name = name,params= params)
+            node.child_GUIDS = child_GUIDS
+            node.parent_GUID = parent
+            nodes.append(node)
+            self.add_node(node,QPointF(x,y))
+            nodes_guid_map[guid] = node.GUID
+
+        def get_new_guid(old_guid):
+            new_guid = nodes_guid_map.get(old_guid)
+            if new_guid is None:
+                new_guid = old_guid
+            return new_guid
+
+        #旧guid根据映射改成新guid
+        for node in nodes:
+            new_child_guids = []
+            for child_guid in node.child_GUIDS:
+                new_child_guids.append(get_new_guid(child_guid))
+            node.child_GUIDS = new_child_guids
+            node.parent_GUID = get_new_guid(node.parent_GUID)
+
+        for guid, v in self.nodes.items():
+            for c_guid in v.child_GUIDS:
+                self.add_link(v,self.nodes[c_guid])
+        for node_name, v in data['default_values'].items():
+            node_config = g.config.data['nodes'].get(node_name)
+            if node_config is not None:
+                for param_name, loaded_param_default_value in v.items():
+                    param_config = node_config['params'].get(param_name)
+                    if param_config is not None:
+                        param_config['default_value'] = loaded_param_default_value
+        return nodes
 
     def update_node_states(self, infos):
         for info in infos:
